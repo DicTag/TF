@@ -572,8 +572,8 @@ end
 
 _AutoDood.PS.OnConflictCheck  = function()
 	if IsEmpty(AutoDood.tCustom) then
-		-- 粮草堆，散落的镖银，阵营首领战利品		--首领的战利品|散落的镖银|烧尾宴|粮草堆
-		for _, v in ipairs({ 3996, 3874, 4255, 4315 }) do
+		--首领的战利品|散落的镖银|粮草堆|烧尾宴
+		for _, v in ipairs({ 3996, 3874, 4255, 5622 }) do
 			AutoDood.tCustom[_d(v)] = true
 		end
 	end
