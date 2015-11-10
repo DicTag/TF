@@ -1,8 +1,6 @@
 JLTL={
 JL_On=false,
 TL_On=false,
-JL_GJ=false,
-TL_GJ=false,
 JLCount=0,		
 TLCount=0,		
 JLIdx=19458,
@@ -60,8 +58,6 @@ if GetLogicFrameCount() < JLTL.fTimeStamp then return end
 	if GetLogicFrameCount()%8==0 then
 
 		local player = GetClientPlayer()		
-		if JLTL.JL_GJ and not JLTL.JL_On and player.nCurrentStamina <1600 then JLTL.JLSwitch() end	 --挂机模式
-		if JLTL.TL_GJ and not JLTL.TL_On and player.nCurrentThew <1600 then JLTL.TLSwitch()  end	 	
 		if JLTL.JL_On then 
 			dwIndex=JLTL.JLIdx 
 			if player.nMaxStamina == player.nCurrentStamina then  TF.Alert("精力已满 自动吃药关闭", function() end, "Yes")  
@@ -133,8 +129,6 @@ _JLTL.PS.OnPanelActive = function(frame)
 	ui:Append("WndCheckBox", "CheckBox_JLOn",{ txt ="自动吃精力开启", x = 5, y = nY+20, checked =  JLTL.JL_On}):Click(function(bChecked)  JLTL.JL_On = bChecked  end)
 	_,nY=ui:Append("WndCheckBox", "CheckBox_TLOn",{ txt ="自动吃体力开启", x = 210, y = nY+20, checked =  JLTL.TL_On }):Click(function(bChecked)  JLTL.TL_On= bChecked  end):Pos_()
 	_,nY=ui:Append("WndButton", "Button_SetJLHotK", { txt = "设置快捷键", x = 25, y = nY+15 , font = 185, }):Size(120, 28):Click(function() HotkeyPanel_Open("【体服专用插件集】") end):Pos_()
-	_,nY=ui:Append("WndCheckBox", "CheckBox_JLGJ",{ txt ="挂机吃精力模式（精力少于一半自动开启吃精力", x = 5, y = nY+20, checked =  JLTL.JL_GJ}):Click(function(bChecked)  JLTL.JL_GJ = bChecked  end):Pos_()
-	ui:Append("WndCheckBox", "CheckBox_TLGJ",{ txt ="挂机吃体力模式（体力少于一半自动开启吃体力", x = 5, y = nY+10, checked =  JLTL.TL_GJ }):Click(function(bChecked)  JLTL.TL_GJ= bChecked  end):Pos_()
 --	ui:Append("Text", { txt =  "By 微雨凭阑" , x = 340, y =340, font = 205 })
 end
  
