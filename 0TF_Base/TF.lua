@@ -7,7 +7,6 @@
 ---------------------------------------------------------------------
  local _TF = {
 	bFrameOpened=false,
-	welcome=1,
 	szTitle="体服专用插件集",
 	szShort="[体服插件] ",
 	dwVersion= 0x2010000,		--版本号维护
@@ -29,16 +28,7 @@
 	tEvent = {},	
 }	
  
-
-function _TF.WelLoadSuccess()			
-
-	if _TF.welcome==1 then 
-		TF.Sysmsg(string.format("欢迎%s使用体服插件集 v".. TF.GetVersion().." Build ".._TF.szBuildDate, GetClientPlayer().szName ))
-		_TF.welcome = 0 	
-	end
-end                 
-
-
+ 
 -------------------------------------
 -- 设置面板开关、初始化
 -------------------------------------
@@ -124,7 +114,11 @@ _TF.UpdateAnchor = function(frame)
 	end
 end
 
- 
+ -- register conflict checker
+_TF.RegisterConflictCheck = function(fnAction)
+	_TF.tConflict = _TF.tConflict or {}
+	table.insert(_TF.tConflict, fnAction)
+end
 -------------------------------------
 -- 更新设置面板界面
 -------------------------------------
@@ -2146,11 +2140,21 @@ end
 --------------------------------------------------------------------
 -- 注册事件、初始化
 ---------------------------------------------------------------------
-RegisterEvent("PLAYER_ENTER_GAME", _TF.Init)
-RegisterEvent("LOADING_END", _TF.WelLoadSuccess)	
-RegisterEvent("DOODAD_ENTER_SCENE", function() _TF.aDoodad[arg0] = true end)
-RegisterEvent("DOODAD_LEAVE_SCENE", function() _TF.aDoodad[arg0] = nil end)
- 
+TF.RegisterEvent("PLAYER_ENTER_GAME", _TF.Init)
+TF.RegisterEvent("DOODAD_ENTER_SCENE", function() _TF.aDoodad[arg0] = true end)
+TF.RegisterEvent("DOODAD_LEAVE_SCENE", function() _TF.aDoodad[arg0] = nil end)
+ TF.RegisterEvent("LOADING_END", function()
+	if _TF.tConflict then
+		for _, v in ipairs(_TF.tConflict) do v() end
+		_TF.tConflict = nil
+		TF.Sysmsg(string.format("欢迎%s使用体服插件集 v".. TF.GetVersion().." Build ".._TF.szBuildDate, GetClientPlayer().szName ))
+	end
+	-- reseting frame count (FIXED BUG FOR Cross Server)
+--	_TF.nTempFrame = nil
+	for k, v in pairs(_TF.tBreatheCall) do
+		v.nNext = GetLogicFrameCount()
+	end
+end)
 
 TF_Info={}
 TF_Info.PS = {}
