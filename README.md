@@ -18,7 +18,7 @@
 ---------------
 * 可以在作者的新浪微盘或Github下载最新版本。  
 Github [https://github.com/DicTag/TF](https://github.com/DicTag/TF)  
-新浪微盘：[微雨凭阑的分享](http://vdisk.weibo.com/u/5749249142])   
+新浪微盘：[微雨凭阑的分享](http://vdisk.weibo.com/u/5749249142)   
 * 更新日志：  
 [TF commit](https://github.com/DicTag/TF/commits/master)   
 [TF release](https://github.com/DicTag/TF/releases)   
