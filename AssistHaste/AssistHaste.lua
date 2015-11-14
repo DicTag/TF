@@ -212,14 +212,14 @@ end
 		local mid=OriFr/(OriFr-i+1)*1024-1024 
 		if mid==math.ceil(mid) then TotA=mid+1 else TotA=math.ceil(mid) end  
 		if TotA<ExA then  NeedA=0  else    NeedA=math.ceil((TotA-ExA)*54.782/10.24) end	 
-		if TotA<ExA then  NeedB=0  else    NeedB=math.ceil((TotA-ExA)*47.172/10.24) end	--47.16´íµÄ	--³¤¸èÄý¾ø51
+		if TotA<ExA then  NeedB=0  else    NeedB=math.ceil((TotA-ExA)*47.174/10.24) end	--47.174
 		local ATime=hip*(OriFr-i)/16
 		ATime=string.format("%.2f", ATime) 
 		if NeedA<10 then NeedA="    "..NeedA  elseif NeedA<1000 then NeedA="  "..NeedA  end
 		if NeedB<10 then NeedB="    "..NeedB  elseif NeedB<1000 then NeedB="  "..NeedB  end 
 		RateA=NeedA/54.782
 		szRateA=string.format("%.2f", RateA)
-		RateB=NeedB/47.172
+		RateB=NeedB/47.174
 		szRateB=string.format("%.2f", RateB)	--.."%"
 		nX, _ =ui2:Append("Text","d"..i,{ txt = i , x = 30, y = nY,}):Pos_()
 		nX, _ =ui2:Append("Text","ATime"..i, { txt = ATime.."s", x = 65, y = nY, font=101,}):Pos_()
