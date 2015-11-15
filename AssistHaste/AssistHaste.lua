@@ -127,8 +127,8 @@ function AssistHaste.OnFrameCreate()
 ------------------------------------------------------------------------------------------------
 	nY=185	
 	nX, _ =ui:Append("Text", { txt = "时间", x = 64, y = nY, font = 185 }):Pos_()
-	nX, _ =ui:Append("Text", { txt = "加速率", x = 152, y = nY, font = 185 }):Pos_()
-	nX, _ =ui:Append("Text", { txt = "加速等级", x = 258, y = nY, font = 185 }):Pos_()	
+	nX, _ =ui:Append("Text", { txt = "加速率", x = 146, y = nY, font = 185 }):Pos_()
+	nX, _ =ui:Append("Text", { txt = "加速等级", x = 250, y = nY, font = 185 }):Pos_()	
 	nX, _ =ui:Append("Text", { txt = "预    设", x = 520, y = nY, font = 185 }):Hover(function() str = "默认满读条秘籍"  TF.ShowTip(str,35) end,function() HideTip() end):Size(60,28):Pos_()	
 	nX,nY=ui:Append("Text", { txt = "1.5sGCD、彼针、冰蚕、蝎心、...", x = 380, y = nY+35, }):Click(function()  AssistHaste.SetPre("1.5G") end):Size(260,28):Pos_()
 	nY=nY+15
@@ -215,18 +215,18 @@ end
 		if TotA<ExA then  NeedB=0  else    NeedB=math.ceil((TotA-ExA)*47.174/10.24) end	--47.174
 		local ATime=hip*(OriFr-i)/16
 		ATime=string.format("%.2f", ATime) 
-		if NeedA<10 then NeedA="    "..NeedA  elseif NeedA<1000 then NeedA="  "..NeedA  end
-		if NeedB<10 then NeedB="    "..NeedB  elseif NeedB<1000 then NeedB="  "..NeedB  end 
+	--	if NeedA<10 then NeedA="    "..NeedA  elseif NeedA<1000 then NeedA="  "..NeedA  end
+	--	if NeedB<10 then NeedB="    "..NeedB  elseif NeedB<1000 then NeedB="  "..NeedB  end 
 		RateA=NeedA/54.782
 		szRateA=string.format("%.2f", RateA)
 		RateB=NeedB/47.174
 		szRateB=string.format("%.2f", RateB)	--.."%"
-		nX, _ =ui2:Append("Text","d"..i,{ txt = i , x = 30, y = nY,}):Pos_()
-		nX, _ =ui2:Append("Text","ATime"..i, { txt = ATime.."s", x = 65, y = nY, font=101,}):Pos_()
-		nX, _ =ui2:Append("Text","RateA"..i, { txt = szRateA, x = 128, y = nY,  font=109,}):Pos_()		
-		nX, _ =ui2:Append("Text", "RateB"..i,{ txt = szRateB, x = 187, y = nY, font=101,}):Pos_()			
-		nX, _ =ui2:Append("Text", "NeedA"..i,{ txt = NeedA, x = 244, y = nY, font=109,}):Pos_()
-		nX, _ =ui2:Append("Text", "NeedB"..i,{ txt = NeedB, x = 296, y = nY, font=101,}):Pos_()
+		nX, _ =ui2:Append("Text","d"..i,{ txt = i , x = 30, y = nY, align = 1 }):Size(4,28):Pos_()
+		nX, _ =ui2:Append("Text","ATime"..i, { txt = ATime.."s", x = 65, y = nY, font=101, align = 1 }):Size(30,28):Pos_()
+		nX, _ =ui2:Append("Text","RateA"..i, { txt = szRateA, x = 128, y = nY,  font=109, align = 1 }):Size(30,28):Pos_()		
+		nX, _ =ui2:Append("Text", "RateB"..i,{ txt = szRateB, x = 187, y = nY, font=101, align = 1 }):Size(30,28):Pos_()			
+		nX, _ =ui2:Append("Text", "NeedA"..i,{ txt = NeedA, x = 244, y = nY, font=109, align = 1 }):Size(25,28):Pos_()
+		nX, _ =ui2:Append("Text", "NeedB"..i,{ txt = NeedB, x = 296, y = nY, font=101, align = 1 }):Size(25,28):Pos_()
 		
 		nY=nY+30 
 		end
