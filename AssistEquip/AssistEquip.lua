@@ -858,11 +858,11 @@ end
 	end
  end
  
-  function AssistEquip._EquipInfoByID(nID)
+function AssistEquip._EquipInfoByID(nID)
 	player=GetPlayer(nID)   or GetClientPlayer()
-	ttest={}
+	local tEqInfo={}
 	dwBox=0 	
-	dwSize=13 
+	dwSize=13  --武器0，cj重剑1，远程2，13-22包。13-16背包 17玲珑 18-22仓库。22暗器
 	for dwX = 0, dwSize-1, 1 do
 		local	item = GetPlayerItem(player, dwBox, dwX)		
 		if item then
@@ -883,61 +883,24 @@ end
 					fm=dwIndex
 				end
 			end
-			ttest[dwX]={nSub,nuiid,fm,sn,nl}		
+			tEqInfo[dwX]={nSub,nuiid,fm,sn,nl,item.dwTabType,item.dwIndex}			 
 		end
 	end
 	local xinfa=player.GetKungfuMount()
 	local szPreBZ="心法"
 	if xinfa then szPreBZ=xinfa.szSkillName  end
 	if szPvx then  szPreBZ=szPreBZ..szPvx end 
-	AssistEquip.PrintRes(ttest,szPreBZ,szPreBZ)
-	end
+	AssistEquip.PrintRes(tEqInfo,szPreBZ,szPreBZ)
+	--GetUserInput("请输入该方案备注，如：惊羽PVP。", function(szText) AssistEquip.PrintRes(tEqInfo,szText,szPreBZ) end, nil,nil,nil,szPreBZ) 
+end
  
  function AssistEquip.EquipInfo(nID)			--保存配装方案到文件
 	if not nID then nID,nType=Target_GetTargetData() end    --若不高兴ctrl查看id，就选中目标。即可自动获取
-	AssistEquip._EquipInfo(nID)
+	AssistEquip._EquipInfoByID(nID)
 end
 
- function AssistEquip._EquipInfo(nID)
-	player=GetPlayer(nID)   or GetClientPlayer()
 
-	ttest={}
-	dwBox=0 	
-	dwSize=13  --武器0，cj重剑1，远程2，13-22包。13-16背包 17玲珑 18-22仓库。22暗器
-	for dwX = 0, dwSize-1, 1 do
-		local	item = GetPlayerItem(player, dwBox, dwX)			
-		if item then
-			local sn=item.szName
-			local gn=item.nGenre
-			local nuiid=item.nUiId
-			local nSub=item.nSub
-			local nl=item.nLevel
-			local CDEid=item.GetMountFEAEnchantID()
-			local fm=nil
-			if nSub==0   then 			
-				local tattr=item.GetMagicAttrib()
-				if tattr[#tattr] then 
-					local pvxep=tattr[#tattr]["nID"]
-					szPvx="PV"
-					if pvxep==95 then szPvx="PVP" else szPvx="PVE" end	--化劲
-					if CDEid~=0 then 
-						dwTabType,dwIndex=GetColorDiamondInfoFromEnchantID(CDEid)
-						fm=dwIndex
-					end
-				end
-			end
-			ttest[dwX]={nSub,nuiid,fm,sn,nl}		
-		end
-	end
-
-	local xinfa=player.GetKungfuMount()
-	local szPreBZ="心法"
-	if xinfa then szPreBZ=xinfa.szSkillName  end
-	if szPvx then  szPreBZ=szPreBZ..szPvx end 
-	GetUserInput("请输入该方案备注，如：惊羽PVP。", function(szText) AssistEquip.PrintRes(ttest,szText,szPreBZ) end, nil,nil,nil,szPreBZ) 
-end
-
-function AssistEquip.PrintRes(ttest,szBeiZhu,szPreBZ)
+function AssistEquip.PrintRes(tEqInfo,szBeiZhu,szPreBZ)
 --	player=GetPlayer(dwPlayerID)
 	local szName=player.szName
 	local szBeiZhu=szBeiZhu or szPreBZ
@@ -948,23 +911,23 @@ function AssistEquip.PrintRes(ttest,szBeiZhu,szPreBZ)
 	ui3:Append("Text", { txt =	szBeiZhu, x =nX+25, y = 5, font=200}):Pos_()
 	nY=50
 	for i=0,12 do
-		if ttest[i] then
+		if tEqInfo[i] then
 			nX, _ =ui3:Append("Text", { txt =	AssistEquip.ti2Part[i], x =30, y = nY,}):Pos_()
-			nX, _ =ui3:Append("Text", { txt = ttest[i][4], x = 95, y = nY, font=67}):Pos_()
-			nX, _ =ui3:Append("Text", { txt = ttest[i][5], x = 260, y = nY,}):Pos_()
-			if 	ttest[i][3] then  nX, _ =ui3:Append("Text", { txt = GetItemInfo(5,ttest[i][3]).szName, x = 300, y = nY,  font=67}):Pos_()   end
+			nX, _ =ui3:Append("Text", { txt = tEqInfo[i][4], x = 95, y = nY, font=67}):Pos_()
+			nX, _ =ui3:Append("Text", { txt = tEqInfo[i][5], x = 260, y = nY,}):Pos_()
+			if 	tEqInfo[i][3] then  nX, _ =ui3:Append("Text", { txt = GetItemInfo(5,tEqInfo[i][3]).szName, x = 300, y = nY,  font=67}):Pos_()   end
 			nY=nY+30 
 		end
 	end
 	--szMsg, fActionSure, fActionCancel, fAutoClose, rect, szDefault,
 	ui3:Append("Text", { txt = "导出到文件", x =80, y = nY+15, font = 205 }):Size(60,28) :Click(function() 				 
 		GetUserInput("请输入文件名，如：eq1。", function(szText) 
-				AssistEquip.SaveEqData(szText) 
+				AssistEquip.SaveEqData(szText,tEqInfo) 
 			end, nil,nil,nil,szBeiZhu.."-"..szName) 
 		end) 
 		ui3:Append("Text", { txt = "对比背包", x =230, y = nY+15, font = 205 }):Size(60,28) :Click(function() 
 		--TF.Alert("注意和当前穿的重复会不精炼，\n请先切至另一套配装再领", nil, "Ok") 
-		AssistEquip.CompBg(ttest)
+		AssistEquip.CompBg(tEqInfo)
 		end) 			
 	ui3:Append("Text", { txt = "关闭", x =365, y = nY+15, font = 205 }):Size(40,28) :Click(function() 				 
 		--AssistEquip._ShowRes()
@@ -976,39 +939,41 @@ end
 
 	AssistEquip.CoverFlag=false
 	
-function AssistEquip.SaveEqData(szText)
+function AssistEquip.SaveEqData(szText,tEqInfo)
 	tFileExist=LoadLUAData(AssistEquip.EqDataPath..szText..".jx3dat")	
 	if tFileExist and not AssistEquip.CoverFlag then   
-		TF.Alert("                   文件已存在",   function() GetUserInput("请输入文件名，如：eq1。", function(szText2)  AssistEquip.SaveEqData(szText2)  end, nil,nil,nil,szText)  end , "重命名", 
-		function() AssistEquip.CoverFlag=true  AssistEquip.SaveEqData(szText)  end,"覆盖" ) --GetUserInput("请输入文件名：", function(szText1) AssistEquip.SaveEqData(szText1) end, nil,nil,nil) 
+		TF.Alert("                   文件已存在",   function() GetUserInput("请输入文件名，如：eq1。", function(szText2)  AssistEquip.SaveEqData(szText2,tEqInfo)  end, nil,nil,nil,szText)  end , "重命名", 
+		function() AssistEquip.CoverFlag=true  AssistEquip.SaveEqData(szText,tEqInfo)  end,"覆盖" ) 
 		return 
 	end
 	if szText=="" then 		
 		TF.Alert("文件名不能为空", nil, "Ok")  
 	else
-		SaveLUAData(AssistEquip.EqDataPath..szText..".jx3dat",ttest) 
+		SaveLUAData(AssistEquip.EqDataPath..szText..".jx3dat",tEqInfo) 
 		AssistEquip.CoverFlag=false
 		OutputMessage("MSG_ANNOUNCE_YELLOW","导出成功："..AssistEquip.EqDataPath..szText..".jx3dat")
 	end
  end
 
  function	AssistEquip.LoadEqData(szText)	--导入配装方案，背包对比，重复精炼注意
-	AssistEquip.tload=LoadLUAData(AssistEquip.EqDataPath..szText..".jx3dat")	
+	local FileName=AssistEquip.EqDataPath..szText
+	if not string.find(FileName,".jx3dat") then FileName=FileName..".jx3dat"  end --如果已经有.jx3dat不要再写
+	AssistEquip.tload=LoadLUAData(FileName)
 	if not AssistEquip.tload then  
 		TF.Alert("文件不存在", nil, "Ok") return  
 	else  
 		OutputMessage("MSG_ANNOUNCE_YELLOW","方案导入成功")
 		AssistEquip._ShowRes()
 		local  ui3 = TF.UI(Station.Lookup("Normal1/ResEqWnd"))
-		ttest=AssistEquip.tload
+		local tEqInfo=AssistEquip.tload
 		ui3:Append("Text", { txt =	szText, x =205, y = 5, font=207}):Pos_()
 		nY=50
 		for i=0,12 do
-			if ttest[i] then
+			if tEqInfo[i] then
 				nX, _ =ui3:Append("Text", { txt =	AssistEquip.ti2Part[i], x =30, y = nY,}):Pos_()
-				nX, _ =ui3:Append("Text", { txt = ttest[i][4], x = 95, y = nY, font=67}):Pos_()
-				nX, _ =ui3:Append("Text", { txt = ttest[i][5], x = 260, y = nY,}):Pos_()
-				if 	ttest[i][3] then  nX, _ =ui3:Append("Text", { txt = GetItemInfo(5,ttest[i][3]).szName, x = 300, y = nY,  font=67}):Pos_()   end 
+				nX, _ =ui3:Append("Text", { txt = tEqInfo[i][4], x = 95, y = nY, font=67}):Pos_()
+				nX, _ =ui3:Append("Text", { txt = tEqInfo[i][5], x = 260, y = nY,}):Pos_()
+				if 	tEqInfo[i][3] then  nX, _ =ui3:Append("Text", { txt = GetItemInfo(5,tEqInfo[i][3]).szName, x = 300, y = nY,  font=67}):Pos_()   end 
 				nY=nY+30 
 			end
 		end
@@ -1026,8 +991,24 @@ function AssistEquip.SaveEqData(szText)
 	end 
  end
 	
-function AssistEquip.CompBg(tload)
-	if not tload then TF.Alert("未导入方案，请先导入配装方案", nil, "Ok")  return end
+function AssistEquip.IsIndex(dwIndex,ainfo)
+	local dIndex=ainfo[7]
+	if string.find(ainfo[4],"激水翦风") and GetClientPlayer().nCamp==2 and ainfo[6] then  	--浩气   套装+108，首饰+162 =恶人  
+			dIndex=ainfo[7]+108
+		if ainfo[1]==4 or ainfo[1]==5 or ainfo[1]==7 then	--链 戒 坠 
+			dIndex=ainfo[7]+54
+		end
+	elseif  string.find(ainfo[4],"锦绣河山") and GetClientPlayer().nCamp==1 and ainfo[6] then  	 --老数据不做处理
+			dIndex=ainfo[7]-108
+		if ainfo[1]==4 or ainfo[1]==5 or ainfo[1]==7 then  
+			dIndex=ainfo[7]-54
+		end
+	end
+	if dwIndex==dIndex then return true else return false end
+end
+
+function AssistEquip.CompBg(tSample)
+	if not tSample then TF.Alert("未导入方案，请先导入配装方案", nil, "Ok")  return end
 	local f=Station.Lookup("Normal/BigBagPanel")
 	if not f or not f:IsVisible() then  TF.Alert("打开背包领取装备后对比", nil, "Ok")  return end
 	AssistEquip.SetAllDark()	--原来是2
@@ -1040,9 +1021,10 @@ function AssistEquip.CompBg(tload)
 			if item then		
 				box=GetUIItemBox(dwBox, dwX,true)	
 				if box:GetAlpha()==30 then			
-					for k,ainfo in pairs(tload) do
-						if item.nUiId==ainfo[2] then		 
-							box:SetAlpha(255) break		
+					for k,ainfo in pairs(tSample) do
+						--	if item.nUiId==ainfo[2] then		  																	--pvp首饰的nUiId不能判断其唯一性
+						if ( item.dwTabType==ainfo[6] and AssistEquip.IsIndex(item.dwIndex,ainfo) )  or  ( not ainfo[6] and item.nUiId==ainfo[2] ) then		--or为了兼容以前的数据（但老数据无法过滤同uiid的装备
+							box:SetAlpha(255) break																										 
 						end
 						if (k==0 or k==1) and  item.dwTabType==5 and item.dwIndex==ainfo[3] then  --武器 五彩石
 							box:SetAlpha(255) break
