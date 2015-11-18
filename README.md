@@ -34,7 +34,7 @@ Github [https://github.com/DicTag/TF](https://github.com/DicTag/TF)
 3. 进入角色登录界面后，在插件管理界面，除了“TF基础库”必须勾选外，其他可根据需求进行勾选
 4. 进入游戏后，在玩家头像左边HM按钮（如果你装了海鳗的话）上方有一个TF 按纽，点击可打开插件集的自定义配置界面。欢迎图下方可设置相关快捷键。
 5. 玩家头像右键菜单、小地图下方的小板手菜单中也有相关菜单供快捷调用插件功能。
-6. 更详细的功能介绍和使用方法可参考视频演示 [剑三体服TF插件v2.1.0的功能介绍和演示](http://v.youku.com/v_show/id_XMTM4MzA5NjQ2MA==.html)
+6. 更详细的功能介绍和使用方法可参考视频演示 [剑三体服TF插件v2.1.0的功能介绍和演示](http://v.youku.com/v_show/id_XMTM4OTYwNjYzMg==.html)
 	
 	
 特别鸣谢
