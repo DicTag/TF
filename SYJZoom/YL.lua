@@ -16,6 +16,11 @@ YL={
  
 function YL.OnFrameBreathe()
 	if GetLogicFrameCount() % 4 == 0  then
+--[[ 		local finfo=Station.Lookup("Normal/CharInfo")
+		if finfo and finfo:IsVisible() then 			
+			finfo:EnableDrag(1)
+			finfo:SetDragArea(0,0,80,80)	
+		end ]]
 		local f = Station.Lookup("Normal/ExteriorView")
 		if f and f:IsVisible() then
 			f:EnableDrag(1)
@@ -24,6 +29,7 @@ function YL.OnFrameBreathe()
  		end
 		local f2 = Station.Lookup("Normal/CharacterPanel")   
 		if f2 and f2:IsVisible() then 
+			f2:BringToTop()
 			f2:EnableDrag(1)
 			f2:SetDragArea(0,0,80,80)			
 			YL.AddEnterButton2(f2)
@@ -68,7 +74,7 @@ function YL.AddEnterButton2(frame)
 	if not btn then    
 		fff=frame:Lookup("Page_Main/Page_Battle")	  	
 		local ui = TF.UI(fff)   
-		ui:Append("Text", { txt ="拖这里", font = 27 , x = 8, y = 10 ,alpha=200}) 	
+		ui:Append("Text", { txt ="拖", font = 224 , x = 8, y = 10 ,alpha=200}) 	
 	end
 	local szFile="Interface\\TF\\SYJZoom\\YL.ini"
 	local tips=GetFormatText("放大/还原\n", 101)
@@ -83,7 +89,7 @@ function YL.AddEnterButton()
 			YL.mnW,YL.mnH=f:Lookup("Scene_Role"):GetSize()
 			YL.nX00,YL.nY00=f:Lookup("Scene_Role"):GetRelPos()
 			local ui = TF.UI(f)
-			ui:Append("Text", { txt ="拖这里", font = 27 , x = 8, y = 10 ,alpha=200}) 			
+			ui:Append("Text", { txt ="拖", font = 224 , x = 8, y = 10 ,alpha=200}) 			
 		end
 		local szFile="Interface\\TF\\SYJZoom\\YL.ini"
 		local tips=GetFormatText("放大/还原\n", 101) .. GetFormatText("放大后，人物模型上仍可用鼠标滚轮放大缩小", 106)
@@ -132,7 +138,7 @@ function YL.sZoom2()
 	if YL.bZoomed2==false then 
 		f:Scale(2.2,2.2)  
 		YL.bZoomed2=true
-		Wnd.CloseWindow("CharInfo")
+		f:BringToTop()
 		else				
 		f:Scale(1/2.2,1/2.2)		
 		YL.bZoomed2=false
