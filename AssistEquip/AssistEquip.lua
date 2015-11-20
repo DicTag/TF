@@ -281,7 +281,7 @@ function AssistEquip.OnFrameCreate()
 	ui3= TF.UI(Station.Lookup("Normal/AssistEquip/PageSet_Main/Page_Equip/")) 
 	
 	nX,_=ui:Append("Text", { txt = "刷药配装助手", x = 300, y = 20, font = 203 }):Pos_()
-	nX,_=ui:Append("Text", { txt = "如何微调 ", x =328, y =436,  }):Click(function() tips="背包过滤微调键使用方法：\n【1】在背包某格上按[保留键]强制高亮（不会售出\n【2】在背包某格上按[待售键]强制调暗（自动售出\n【3】快捷键为【保留：强制高亮】【待售：强制调暗】\n"  TF.Sysmsg(tips,AssistEquip.DETitle) end):Hover(function()  tips="点击后看聊天栏提示" TF.ShowTip(tips) end):Size(65,28):Pos_()
+	nX,_=ui:Append("Text", { txt = "如何微调 ", x =328, y =436,  }):Click(function() tips="背包过滤微调键使用方法：\n【1】在背包某格上按[保留键]强制高亮（不会售出\n【2】在背包某格上按[待售键]强制调暗（自动售出\n【3】快捷键为【保留：强制高亮】【待售：强制调暗】\n"  TF.Sysmsg(tips,AssistEquip.DETitle) end):Hover(function()  tips="点击后看聊天栏提示" TF.ShowTip(tips) end,function() HideTip() end):Size(65,28):Pos_()
 	ui:Append("WndButton",  { txt = "设置保留/待售键", x = nX, y = 438 , font = 185, }):Size(145, 28):Click(function() HotkeyPanel_Open("【体服专用插件集】") end):Pos_()
 	ui:Append("WndCheckBox", "CheckBox_Lock",{ txt ="Lock(慎用", x = 556, y = 438, font = 203 }):Pos_()
 	ui:Append("Text", { txt = "勾选需保留的（背包显示高亮", x =50, y = 475 , font = 205, })	
@@ -357,9 +357,7 @@ function AssistEquip.OnFrameCreate()
 	nX,_=ui1:Append("WndCheckBox", "CheckBox_csDX",{ txt ="毒性", x = 470, y = nY, font = 203 }):Pos_()
 	nX,nY=ui1:Append("WndCheckBox", "CheckBox_csTL",{ txt ="天罗", x = 560, y = nY, font = 203 }):Pos_()
 	
-	this:RegisterEvent("SYS_MSG")
-
-	
+ 
 	nY=62
 	nX,_=ui2:Append("WndButton", "Button_GrpFMPart", { txt = "部    位", x = 70, y = nY , font = 205, }):Size(80, 28):Pos_()
 	nX,_=ui2:Append("WndCheckBox", "CheckBox_fmPartCloth",{ txt ="衣", x = 200, y = nY, font = 203 }):Pos_() 
@@ -455,8 +453,8 @@ function AssistEquip.OnFrameCreate()
 		end)
 	ui3:Append("Text", { txt = "导入方案", x =500, y = 260, font = 205 }):Size(60,28) :Click(function() 
 		GetUserInput("请输入需要导入的文件名(不要后缀，如：eq\n路径在Interface/EqData",function(szText) AssistEquip.LoadEqData(szText) end, nil)
-		end):Hover(function()  tips="从文件导入配装信息" TF.ShowTip(tips) end)
-	ui3:Append("Text", { txt = "如何获取快照", x =500, y = 300, }):Size(80,28) :Click(function() tips="如何获取快照：\n【自己】从人物装备面板保存快照（右上角\n【附近玩家】需选中该玩家，不要切换目标\n【队友好友不在附近】需向其询问ID，勿选中其他目标\n（鼠标悬停自身头像【TF】按钮可获取自身ID\n（按住Ctrl划过Cataclysm面板，可获取队友ID\n只保存装备及五彩石信息，无法获取附魔信息\n"  TF.Sysmsg(tips,AssistEquip.DETitle) end):Hover(function()  tips="点击后看聊天栏提示" TF.ShowTip(tips) end):Pos_()
+		end):Hover(function()  tips="从文件导入配装信息" TF.ShowTip(tips) end,function() HideTip() end)
+	ui3:Append("Text", { txt = "如何获取快照", x =500, y = 300, }):Size(80,28) :Click(function() tips="如何获取快照：\n【自己】从人物装备面板保存快照（右上角\n【附近玩家】需选中该玩家，不要切换目标\n【队友好友不在附近】需向其询问ID，勿选中其他目标\n（鼠标悬停自身头像【TF】按钮可获取自身ID\n（按住Ctrl划过Cataclysm面板，可获取队友ID\n只保存装备及五彩石信息，无法获取附魔信息\n"  TF.Sysmsg(tips,AssistEquip.DETitle) end):Hover(function()  tips="点击后看聊天栏提示" TF.ShowTip(tips) end,function() HideTip() end):Pos_()
  
 	local page = this:Lookup("PageSet_Main")
 	page:Lookup("CheckBox_Drug"):Lookup("", ""):Lookup("Text_DrugCapital"):SetText("刷药")
@@ -887,10 +885,12 @@ function AssistEquip._EquipInfoByID(nID)
 		end
 	end
 	local xinfa=player.GetKungfuMount()
+	local score=player.GetTotalEquipScore()
+	tEqInfo[13]=score
 	local szPreBZ="心法"
 	if xinfa then szPreBZ=xinfa.szSkillName  end
 	if szPvx then  szPreBZ=szPreBZ..szPvx end 
-	AssistEquip.PrintRes(tEqInfo,szPreBZ,szPreBZ)
+	AssistEquip.PrintRes(tEqInfo,szPreBZ,score)
 	--GetUserInput("请输入该方案备注，如：惊羽PVP。", function(szText) AssistEquip.PrintRes(tEqInfo,szText,szPreBZ) end, nil,nil,nil,szPreBZ) 
 end
  
@@ -900,27 +900,28 @@ end
 end
 
 
-function AssistEquip.PrintRes(tEqInfo,szBeiZhu,szPreBZ)
+function AssistEquip.PrintRes(tEqInfo,szBeiZhu,score)
 --	player=GetPlayer(dwPlayerID)
 	local szName=player.szName
-	local szBeiZhu=szBeiZhu or szPreBZ
+	local szBeiZhu=szBeiZhu --or szPreBZ
 	AssistEquip._ShowRes()
 	local  ui3 = TF.UI(Station.Lookup("Normal1/ResEqWnd"))
 
-	ui3:Append("Text", { txt =	szName, x =145, y = 5, font=200}):Pos_()
-	ui3:Append("Text", { txt =	szBeiZhu, x =nX+25, y = 5, font=200}):Pos_()
+	ui3:Append("Text", { txt =	szName, x =80, y = 5, font=200})
+	ui3:Append("Text", { txt =	score.."分", x =235, y = 5, font=200})
+	ui3:Append("Text", { txt =	szBeiZhu, x =340, y = 5, font=200})
 	nY=50
 	for i=0,12 do
-		if tEqInfo[i] then
-			nX, _ =ui3:Append("Text", { txt =	AssistEquip.ti2Part[i], x =30, y = nY,}):Pos_()
-			nX, _ =ui3:Append("Text", { txt = tEqInfo[i][4], x = 95, y = nY, font=67}):Pos_()
-			nX, _ =ui3:Append("Text", { txt = tEqInfo[i][5], x = 260, y = nY,}):Pos_()
+		if tEqInfo[i] then --and type(tEqInfo[i])=="table"
+			ui3:Append("Text", { txt =	AssistEquip.ti2Part[i], x =30, y = nY,})
+			ui3:Append("Text", { txt = tEqInfo[i][4], x = 95, y = nY, font=67})
+			ui3:Append("Text", { txt = tEqInfo[i][5], x = 260, y = nY,}):Pos_()
 			if 	tEqInfo[i][3] then  nX, _ =ui3:Append("Text", { txt = GetItemInfo(5,tEqInfo[i][3]).szName, x = 300, y = nY,  font=67}):Pos_()   end
 			nY=nY+30 
 		end
 	end
 	--szMsg, fActionSure, fActionCancel, fAutoClose, rect, szDefault,
-	ui3:Append("Text", { txt = "导出到文件", x =80, y = nY+15, font = 205 }):Size(60,28) :Click(function() 				 
+	ui3:Append("Text", { txt = "导出到文件", x =80, y = nY+15, font = 205 }):Size(80,28) :Click(function() 				 
 		GetUserInput("请输入文件名，如：eq1。", function(szText) 
 				AssistEquip.SaveEqData(szText,tEqInfo) 
 			end, nil,nil,nil,szBeiZhu.."-"..szName) 
@@ -966,13 +967,14 @@ function AssistEquip.SaveEqData(szText,tEqInfo)
 		AssistEquip._ShowRes()
 		local  ui3 = TF.UI(Station.Lookup("Normal1/ResEqWnd"))
 		local tEqInfo=AssistEquip.tload
-		ui3:Append("Text", { txt =	szText, x =205, y = 5, font=207}):Pos_()
+		if tEqInfo[13] then szText=szText.."(装分："..tEqInfo[13]..")" end
+		ui3:Append("Text", { txt =	szText, x =120, y = 5, font=205}):Pos_()
 		nY=50
 		for i=0,12 do
-			if tEqInfo[i] then
-				nX, _ =ui3:Append("Text", { txt =	AssistEquip.ti2Part[i], x =30, y = nY,}):Pos_()
-				nX, _ =ui3:Append("Text", { txt = tEqInfo[i][4], x = 95, y = nY, font=67}):Pos_()
-				nX, _ =ui3:Append("Text", { txt = tEqInfo[i][5], x = 260, y = nY,}):Pos_()
+			if tEqInfo[i] then  -- and type(tEqInfo[i])=="table" 
+				ui3:Append("Text", { txt = AssistEquip.ti2Part[i], x =30, y = nY,})
+				ui3:Append("Text", { txt = tEqInfo[i][4], x = 95, y = nY, font=67})
+				ui3:Append("Text", { txt = tEqInfo[i][5], x = 260, y = nY,}):Pos_()
 				if 	tEqInfo[i][3] then  nX, _ =ui3:Append("Text", { txt = GetItemInfo(5,tEqInfo[i][3]).szName, x = 300, y = nY,  font=67}):Pos_()   end 
 				nY=nY+30 
 			end
@@ -980,9 +982,9 @@ function AssistEquip.SaveEqData(szText,tEqInfo)
 		ui3:Append("Text", { txt = "对比背包", x =80, y = nY+15, font = 205 }):Size(60,28) :Click(function() 
 		AssistEquip.CompBg(AssistEquip.tload)
 		end) 	
-		ui3:Append("WndCheckBox", "CheckBox_LockEq",{ txt ="Lock(慎用", x = 160, y = nY+15, font = 187, checked = AssistEquip.LockEq }):Click(function(bChecked) AssistEquip.LockEq = bChecked
+		ui3:Append("WndCheckBox", "CheckBox_LockEq",{ txt ="Lock(慎用", x = 185, y = nY+14, font = 167, checked = AssistEquip.LockEq }):Click(function(bChecked) AssistEquip.LockEq = bChecked
 	end)
-		ui3:Append("Text", { txt = "关闭", x =290, y = nY+15, font = 205 }):Size(40,28) :Click(function() 				 
+		ui3:Append("Text", { txt = "关闭", x =365, y = nY+15, font = 205 }):Size(40,28) :Click(function() 				 
 		Station.Lookup("Normal1/ResEqWnd"):Destroy()	
 		AssistEquip.LockEq=false
 		local fb=Station.Lookup("Normal/BigBagPanel")
@@ -995,13 +997,17 @@ function AssistEquip.IsIndex(dwIndex,ainfo)
 	local dIndex=ainfo[7]
 	if string.find(ainfo[4],"激水翦风") and GetClientPlayer().nCamp==2 and ainfo[6] then  	--浩气   套装+108，首饰+162 =恶人  
 			dIndex=ainfo[7]+108
-		if ainfo[1]==4 or ainfo[1]==5 or ainfo[1]==7 then	--链 戒 坠 
-			dIndex=ainfo[7]+54
+		if ainfo[1]==0 then 
+			dIndex=ainfo[7]+37
+		elseif ainfo[1]==4 or ainfo[1]==5 or ainfo[1]==7 then	--链 戒 坠 
+			dIndex=ainfo[7]+162
 		end
 	elseif  string.find(ainfo[4],"锦绣河山") and GetClientPlayer().nCamp==1 and ainfo[6] then  	 --老数据不做处理
 			dIndex=ainfo[7]-108
-		if ainfo[1]==4 or ainfo[1]==5 or ainfo[1]==7 then  
-			dIndex=ainfo[7]-54
+		if ainfo[1]==0 then 
+			dIndex=ainfo[7]-37
+		elseif ainfo[1]==4 or ainfo[1]==5 or ainfo[1]==7 then  
+			dIndex=ainfo[7]-162
 		end
 	end
 	if dwIndex==dIndex then return true else return false end
@@ -1021,13 +1027,14 @@ function AssistEquip.CompBg(tSample)
 			if item then		
 				box=GetUIItemBox(dwBox, dwX,true)	
 				if box:GetAlpha()==30 then			
-					for k,ainfo in pairs(tSample) do
-						--	if item.nUiId==ainfo[2] then		  																	--pvp首饰的nUiId不能判断其唯一性
-						if ( item.dwTabType==ainfo[6] and AssistEquip.IsIndex(item.dwIndex,ainfo) )  or  ( not ainfo[6] and item.nUiId==ainfo[2] ) then		--or为了兼容以前的数据（但老数据无法过滤同uiid的装备
-							box:SetAlpha(255) break																										 
-						end
-						if (k==0 or k==1) and  item.dwTabType==5 and item.dwIndex==ainfo[3] then  --武器 五彩石
-							box:SetAlpha(255) break
+					for k=0,12 do
+						if tSample[k]  then	--and type(tSample[j])=="table"
+							if ( item.dwTabType==tSample[k][6] and AssistEquip.IsIndex(item.dwIndex,tSample[k]) )  or  ( not tSample[k][6] and item.nUiId==tSample[k][2] ) then		--or为了兼容以前的数据（但老数据无法过滤同uiid的装备
+								box:SetAlpha(255) break																										 
+							end
+							if (k==0 or k==1) and  item.dwTabType==5 and item.dwIndex==tSample[k][3] then  --武器 五彩石
+								box:SetAlpha(255) break
+							end
 						end
 					end
 				end
@@ -1149,31 +1156,37 @@ function	AssistEquip.SetLastCheck()
 	end
 end
 
-
- function needreset()      	--堆叠！！拆分！！ --OpenWindow openshop  禁用
-	local frame=Station.Lookup("Normal/AssistEquip")			 
-	frame:Hide() 
-	if AssistEquip.Lock or AssistEquip.LockEq then 
-		if  IsBagInSort() then  
-			if  AssistEquip.Lock then	Station.Lookup("Normal/AssistEquip"):Lookup("CheckBox_Lock"):Check(false)	end
-			if  AssistEquip.LockEq  then	Station.Lookup("Normal1/ResEqWnd"):Lookup("CheckBox_LockEq"):Check(false)	end
-			TF.Sysmsg("背包整理中，Lock强制关闭")
-		return end 
-		if AssistEquip.LockEq then 	--优先对比装备
-			AssistEquip.CompBg(AssistEquip.tload)
-		else
-			--Output("重打开") 
-			AssistEquip._OpenWindow()  
-		end
+ 
+ResEqWnd={}
+function ResEqWnd.OnFrameBreathe()
+	local chb=Station.Lookup("Normal1/ResEqWnd"):Lookup("CheckBox_LockEq")
+	if  chb and chb:IsCheckBoxChecked() and not AssistEquip.LockEq then 
+		chb:Check(false)	
+		TF.Sysmsg("对话框打开，Lock强制关闭")  		
 	end
+end
+	
+ function AssistEquip.OnFrameBreathe()
+	local chb=Station.Lookup("Normal/AssistEquip"):Lookup("CheckBox_Lock")
+ 	if  chb and chb:IsCheckBoxChecked() and not AssistEquip.Lock then 
+		chb:Check(false)	
+		TF.Sysmsg("对话框打开，Lock强制关闭")  	
+	end
+ end
+ 
+ function needreset()      	--堆叠！！拆分！！ --OpenWindow openshop  禁用
+	Station.Lookup("Normal/AssistEquip"):Hide() 
+	if AssistEquip.Lock then 
+	 --	if IsBagInSort() then return end 
+		AssistEquip._OpenWindow()  --"重打开"
+	end
+	if AssistEquip.LockEq then AssistEquip.CompBg(AssistEquip.tload) 	end
 end
 RegisterEvent("BAG_ITEM_UPDATE",needreset)
 
-
 function AssistEquip.OnOpenWindow()
-	if  AssistEquip.Lock then	Station.Lookup("Normal/AssistEquip"):Lookup("CheckBox_Lock"):Check(false)		TF.Sysmsg("对话框打开，Lock强制关闭")  end
-	if  AssistEquip.LockEq  then	Station.Lookup("Normal1/ResEqWnd"):Lookup("CheckBox_LockEq"):Check(false)		TF.Sysmsg("对话框打开，Lock强制关闭")  end
-
+	if  AssistEquip.Lock then	AssistEquip.Lock=false return end 	--保险一点 这里直接false掉，防止卡帧，都不需要flag了
+	if  AssistEquip.LockEq  then	AssistEquip.LockEq=false  return end 	 
 end
 
 RegisterEvent("OPEN_WINDOW",AssistEquip.OnOpenWindow)
@@ -1641,7 +1654,8 @@ function AssistEquip.OnCheckBoxCheck()
 	if szName == "CheckBox_Lock"  then	 AssistEquip.Lock=true return	end 
 	if szName == "CheckBox_IsOn"  then	AssistEquip.IsOn = true	AssistEquip.IsMoneyFull()  	
 		chb=Station.Lookup("Normal/AssistEquip"):Lookup("CheckBox_Lock") chb:Check(false) chb:Enable(false) chb:Lookup("","Text_Default"):SetFontScheme(161)
-		if AssistEquip.Lock then TF.Sysmsg("售卖开启，Lock强制关闭")	end	return	
+		if AssistEquip.Lock then TF.Sysmsg("售卖开启，Lock强制关闭")	end	
+		return	
 	end
 	if szName == "CheckBox_NoTrad"  then	AssistEquip.NoTr = true	AssistEquip.FindNoTradeItem()	return	end      
 --state
@@ -1721,17 +1735,26 @@ DEBreathe={}
 function DEBreathe.OnFrameBreathe()
 
 	if AssistEquip.Lock or AssistEquip.LockEq then 
-		local fr= Station.Lookup("Normal/Dismantle")	--  拆分界面
-		if (fr and fr:IsVisible()) or Station.GetMouseOverWindow():GetTreePath()== "Normal/BigBagPanel/Btn_Stack2/" then
-			if  AssistEquip.Lock then	Station.Lookup("Normal/AssistEquip"):Lookup("CheckBox_Lock"):Check(false)	end
-			if  AssistEquip.LockEq  then	Station.Lookup("Normal1/ResEqWnd"):Lookup("CheckBox_LockEq"):Check(false)	end
-			TF.Sysmsg("拆分/堆叠物品，Lock强制关闭") 
+	 --	local fr= Station.Lookup("Normal/Dismantle")	--  拆分界面
+	 --	if (fr and fr:IsVisible()) 
+		local path= Station.GetMouseOverWindow():GetTreePath()
+		if not path then return end
+		if  path== "Normal/BigBagPanel/Btn_Split/" 		--拆分（右键堆叠
+		or path== "Normal/BigBagPanel/Btn_Stack2/" 		--堆叠
+		or path== "Normal/BigBagPanel/Btn_CU/"  then	--整理
+			if  AssistEquip.Lock	then	Station.Lookup("Normal/AssistEquip"):Lookup("CheckBox_Lock"):Check(false)	end
+			if  AssistEquip.LockEq	then	Station.Lookup("Normal1/ResEqWnd"):Lookup("CheckBox_LockEq"):Check(false)	end
+			TF.Sysmsg("整理/拆分/堆叠物品，Lock强制关闭") 
 		end
 	end
 	local f = Station.Lookup("Normal/BigBagPanel")
 	if f and f:IsVisible() then
-		if GetLogicFrameCount() % 4 == 0  and not AssistEquip.flagApp0 then
-			AssistEquip.AddEnterButton(f) 	
+		if GetLogicFrameCount() % 4 == 0  and not AssistEquip.flagApp0 then	
+			ui=TF.UI(Station.Lookup("Normal/BigBagPanel"))
+			ui:Append("Text", { txt = "筛选", x =14, y = 337 }):Size(30,28) :Click(function() 
+				AssistEquip._OpenWindow()
+			end, { 90, 230, 90 }):Hover(function() tips=GetFormatText("刷药配装助手\n", 101) .. GetFormatText("打开设置面板", 106) TF.ShowTip(tips) end,function() HideTip() end)	
+			AssistEquip.flagApp0=true
 		end
 		fd=Station.Lookup("Normal/AssistEquip")
 		fMO=Station.GetMouseOverWindow()
@@ -1748,17 +1771,15 @@ function DEBreathe.OnFrameBreathe()
 		if f2 and f2:IsVisible() then 
 			f2:EnableDrag(1)
 			f2:SetDragArea(0,0,80,80)			
-			--AssistEquip.AddEnterButton2(f2)
 			fff=f2:Lookup("Page_Main/Page_Battle")	  	
 			local ui = TF.UI(fff)   
 			local myid=UI_GetClientPlayerID()
-			ui:Append("Text", { txt ="拖这里", font = 27 , x = 8, y = 10 ,alpha=200}) 	
 			nX,_=ui:Append("Text", { txt = "快照", x =268, y = 15, font = 205 }):Size(30,28) :Click(function() 
 				AssistEquip.EquipInfo(UI_GetClientPlayerID())
-			end):Hover(function()  tips="快照当前配装信息\n不含附魔" TF.ShowTip(tips) end):Pos_()	
+			end):Hover(function()  tips="快照当前配装信息\n不含附魔" TF.ShowTip(tips) end,function() HideTip() end):Pos_()	
 			ui:Append("Text", { txt = "导入", x =nX+8, y = 15, font = 205 }):Size(30,28) :Click(function() 
 				GetUserInput("请输入需要导入的文件名(不要后缀，如：eq\n路径在Interface/EqData",function(szText) AssistEquip.LoadEqData(szText) end, nil)
-			end):Hover(function()  tips="从文件导入配装信息" TF.ShowTip(tips) end):Pos_()	
+			end):Hover(function()  tips="从文件导入配装信息" TF.ShowTip(tips) end,function() HideTip() end):Pos_()	
 			AssistEquip.flagApp1 =true
 		end
 	end
@@ -1767,8 +1788,7 @@ function DEBreathe.OnFrameBreathe()
 		local f3 = Station.Lookup("Normal/PlayerView")  
 		if f3  and f3:IsVisible()then 
 			f3:EnableDrag(1)
-			f3:SetDragArea(0,0,80,80)
-			--AssistEquip.AddEnterButton2(f3)			
+			f3:SetDragArea(0,0,80,80)		
 			fff=f3:Lookup("Page_Main/Page_Battle")	  	
 			local ui = TF.UI(fff)   
 		--	ui:Append("Text", { txt ="拖这里", font = 27 , x = 8, y = 10 ,alpha=200}) 	
@@ -1780,8 +1800,8 @@ function DEBreathe.OnFrameBreathe()
 				else
 					AssistEquip.EquipInfoByID(nID)
 				end
-			end):Hover(function()  tips="快照当前配装信息（不含附魔\n选中该玩家，或输入其ID" TF.ShowTip(tips) end):Pos_()
-			ui:Append("Text", { txt = "如何获取ID", x =nX+15, y = 35,}):Size(80,28) :Click(function() tips=AssistEquip.DETitle.."如何获取玩家ID\n附近玩家只需选中，勿切换目标，无需输入ID\n队友好友不在附近：需向其询问ID，勿选中其他目标\n（鼠标悬停自身头像【TF】按钮可获取自身ID\n（按住Ctrl划过Cataclysm面板，可获取队友ID\n"  OutputMessage("MSG_SYS",tips) end):Hover(function()  tips="点击后看聊天栏提示" TF.ShowTip(tips) end)			
+			end):Hover(function()  tips="快照当前配装信息（不含附魔\n选中该玩家，或输入其ID" TF.ShowTip(tips) end,function() HideTip() end):Pos_()
+			ui:Append("Text", { txt = "如何获取ID", x =nX+15, y = 35,}):Size(80,28) :Click(function() tips=AssistEquip.DETitle.."如何获取玩家ID\n附近玩家只需选中，勿切换目标，无需输入ID\n队友好友不在附近：需向其询问ID，勿选中其他目标\n（鼠标悬停自身头像【TF】按钮可获取自身ID\n（按住Ctrl划过Cataclysm面板，可获取队友ID\n"  OutputMessage("MSG_SYS",tips) end):Hover(function()  tips="点击后看聊天栏提示" TF.ShowTip(tips) end,function() HideTip() end)			
 			AssistEquip.flagApp2 =true
 		end	 
 	end
@@ -1860,15 +1880,18 @@ RegisterEvent("SHOP_OPENSHOP", AssistEquip.OnOpenShop)
  
 function AssistEquip.SetOff()			--为了防止人间悲剧
 	Station.Lookup("Normal/AssistEquip"):Lookup("CheckBox_IsOn"):Check(false)
+	if  AssistEquip.Lock then  
+		Station.Lookup("Normal/AssistEquip"):Lookup("CheckBox_Lock"):Check(false) 
+	end
 end
  
 function AssistEquip._OpenWindow()
 	local frame = Station.Lookup("Normal/AssistEquip") 
-	if  frame:IsVisible() then 
+	if  frame:IsVisible() then    
 		frame:Hide() AssistEquip.bFrameOpened = false
 		AssistEquip.ResetBag()
 		AssistEquip.SetOff() 
-	else	
+	else 
 		frame:Show() AssistEquip.bFrameOpened = true
 		f = Station.Lookup("Normal/BigBagPanel")
 		if not f or not f:IsVisible() then return end	
@@ -1886,13 +1909,6 @@ AssistEquip.bFrameOpened=false
 		return 1
 	end
 	return 0
-end
- 
-function AssistEquip.AddEnterButton(f) 
-	local szFile="Interface\\TF\\AssistEquip\\btn.ini"
-	local tips=GetFormatText("刷药配装助手\n", 101) .. GetFormatText("打开设置面板", 106)
-	TF.AddEnterButton(f,"Btn_OpenDE",szFile,"WndButton",100,0,tips,AssistEquip._OpenWindow)	
-	AssistEquip.flagApp0=true
 end
  
 
