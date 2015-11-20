@@ -48,7 +48,11 @@ AssistChJT={
 		["YXXL"]="传送到英雄永王行宫·仙侣庭园（限制等级95）",			
 		["YXHY"]="传送到英雄永王行宫·花月别院（限制等级95）",		
 		["BHXL"]="传送到帮会永王行宫·仙侣庭园（限制等级95）",		
-		["BHHY"]="传送到帮会永王行宫·花月别院（限制等级95）",				
+		["BHHY"]="传送到帮会永王行宫·花月别院（限制等级95）",		
+		["C1XL"]="传送到10人挑战永王行宫·仙侣庭园（限制等级95）",	
+		["C2XL"]="传送到25人挑战永王行宫·仙侣庭园（限制等级95）",	
+		["C1HY"]="传送到10人挑战永王行宫·花月别院（限制等级95）",	
+		["C2HY"]="传送到25人挑战永王行宫·花月别院（限制等级95）",			
 		["LuoYZL"]="传送到洛阳·战乱（推荐等级80）",	 
 		["ChAn"]="传送到长安·战乱（推荐等级85）",						 
 		["DXC"]="传送到稻香村(若地图人数已满请多试几次)",					
@@ -130,7 +134,7 @@ AssistChJT={
 		["Button_TMJG"]="获取唐门专用子弹",
 	},	
 	tBtnUnDXC={"Button_MiJi","Button_XYCL","Button_ZYHQ","Button_ZYER","Button_FuZhu","Button_FZ90","Button_FZ95","Button_ColorStone","Button_ClrBag","Button_ZYZL","Button_MPDX","Button_AddMoney"},
-	tBtnUnable = {},	
+	tBtnUnable = {"Button_FlyCGM"},	
 	tBtnFemaleUn = {"Button_MPSL","Button_MPCG",},
 	tBtnHanziUn = {"Button_MPXX",},
 	tBtnBoyUn = {"Button_MPWD","Button_MPTM","Button_MPMJ","Button_MPCG",},	--WD
@@ -167,6 +171,7 @@ AssistChJT.tMPEn = {[2]= AssistChJT.tMPFemaleEn,[6]= AssistChJT.tMPFemaleEn,[1]=
 		if not this:IsEnabled() then
 			local szSce=GetClientPlayer().GetScene().szDisplayName
 			if szSce~="稻香村"	and szName~="Button_HorseBag" and  szName~="Button_XiuWei"  and szName~="Button_Friend" and  szName~="Button_TMJG"  and  szName~="Button_Money50"  and not string.find(szName,"Button_Set")  and not string.find(szName,"Button_Fly") then TF.ShowTip("该功能只能在稻香村使用") return end			
+			if szName=="Button_FlyCGM" then TF.ShowTip("暂未开放，连书院都没了") return end
  
 			local player=GetClientPlayer()
 			tBtnUn2=AssistChJT.tRoleBtn[player.nRoleType]
@@ -435,17 +440,17 @@ function AssistChJT.OnFrameCreate()
 	nX,_=ui:Append("WndButton", "Button_Money50", { txt = "50万", x = 90, y = nY }):Size(50, 28):Pos_()	
 	
 	nY=70
-	nX,nY=ui:Append("Text", { txt = "主 城：", x = 400, y = nY, font = 192 }):Pos_()
-	nY=nY+18
-	nX,_=ui:Append("WndButton", "Button_FlyDXC", { txt = "稻香村", x = 400, y = nY }):Size(56, 28):Pos_()
-	nX,_=ui:Append("WndButton", "Button_FlyChDu", { txt = "成都", x = nX+10, y = nY }):Size(56, 28):Pos_()	
-	nX,_=ui:Append("WndButton", "Button_FlyYaZh", { txt = "扬州", x = nX+10, y = nY }):Size(56, 28):Pos_()	
-	nX, _ =ui:Append("WndButton", "Button_FlyLuoY", { txt = "洛阳", x = nX+10, y = nY }):Size(56, 28):Pos_()
-	nX,nY=ui:Append("WndButton", "Button_FlyChAn", { txt = "长安*", x = nX+10, y = nY }):Size(56, 28):Pos_()
-	
-	
+	nX,_=ui:Append("Text", { txt = "主 城：", x = 395, y = nY, font = 192 }):Pos_()	
+	nX,_=ui:Append("WndButton", "Button_FlyDXC", { txt = "稻香村", x = 455, y = nY }):Size(75, 28):Pos_()
+	nX,_=ui:Append("WndButton", "Button_FlyChAn", { txt = "长安*", x = nX+16, y = nY }):Size(75, 28):Pos_()
+	nX,nY=ui:Append("WndButton", "Button_CCHT", { txt = "瞿塘峡", x = nX+16, y = nY }):Size(75, 28):Pos_()
 	nY=nY+12
-	nX,nY=ui:Append("Text", { txt = "五 小：", x = 400, y = nY, font = 192 }):Pos_()
+	nX,_=ui:Append("WndButton", "Button_FlyChDu", { txt = "成都", x = 455, y = nY }):Size(75, 28):Pos_()	
+	nX,_=ui:Append("WndButton", "Button_FlyYaZh", { txt = "扬州", x = nX+16, y = nY }):Size(75, 28):Pos_()	
+	nX, nY =ui:Append("WndButton", "Button_FlyLuoY", { txt = "洛阳", x = nX+16, y = nY }):Size(75, 28):Pos_()
+	
+--[[ 	
+	nY=nY+12
 	nY=nY+18
 	nX,_=ui:Append("WndButton", "Button_FlyTQL", { txt = "天泣", x = 400, y = nY }):Size(56, 28):Pos_()
 	nX,_=ui:Append("WndButton", "Button_FlyYSSQ", { txt = "圣泉", x = nX+10, y = nY }):Size(56, 28):Pos_()	
@@ -458,33 +463,42 @@ function AssistChJT.OnFrameCreate()
 	nX,_=ui:Append("WndButton", "Button_FlyFKCYh", { txt = "禅院H", x = nX+10, y = nY}):Size(56, 28):Pos_()	
 	nX,_=ui:Append("WndButton", "Button_FlyYXSXh", { txt = "水榭H", x = nX+10, y = nY}):Size(56, 28):Pos_()
 	nX,nY=ui:Append("WndButton", "Button_FlyWSSYh", { txt = "书院H", x = nX+10, y = nY}):Size(56, 28):Pos_()	
-
-	nY=nY+12
-	nX,nY=ui:Append("Text", { txt = "团 本：", x = 400, y = nY, font = 192 }):Pos_()
-	nY=nY+18	
-	nX,_=ui:Append("WndButton", "Button_FlyPTXL", { txt = "仙侣", x = 400, y = nY }):Size(56, 28):Pos_()
+ ]]
+	nY=nY+32
+	nX,_=ui:Append("Text", { txt = "团 本：", x = 395, y = nY, font = 192 }):Pos_()
+--[[ 	nX,_=ui:Append("WndButton", "Button_FlyPTXL", { txt = "仙侣", x = 400, y = nY }):Size(56, 28):Pos_()
 	nX,_=ui:Append("WndButton", "Button_FlyBHXL", { txt = "仙侣B", x = nX+10, y = nY }):Size(56, 28):Pos_()	
-	nX,nY=ui:Append("WndButton", "Button_FlyYXXL", { txt = "仙侣H", x = nX+10, y = nY}):Size(56, 28):Pos_()	
+	nX,_=ui:Append("WndButton", "Button_FlyYXXL", { txt = "仙侣H", x = nX+10, y = nY}):Size(56, 28):Pos_()	
+	nX,_=ui:Append("WndButton", "Button_FlyC1XL", { txt = "仙侣10挑战", x = nX+10, y = nY }):Size(56, 28):Pos_()	
+	nX,nY=ui:Append("WndButton", "Button_FlyC2XL", { txt = "仙侣25挑战", x = nX+10, y = nY}):Size(56, 28):Pos_()	
 	nX,_=ui:Append("WndButton", "Button_FlyPTHY", { txt = "花月", x = 400, y = nY+12}):Size(56, 28):Pos_()
 	nX,_=ui:Append("WndButton", "Button_FlyBHHY", { txt = "花月B", x = nX+10, y = nY+12}):Size(56, 28):Pos_()	
-	nX,nY=ui:Append("WndButton", "Button_FlyYXHY", { txt = "花月H", x = nX+10, y = nY+12}):Size(56, 28):Pos_()	
-
+	nX,_=ui:Append("WndButton", "Button_FlyYXHY", { txt = "花月H", x = nX+10, y = nY+12}):Size(56, 28):Pos_()	
+	nX,_=ui:Append("WndButton", "Button_FlyC1HY", { txt = "花月10挑战", x = nX+10, y = nY+12}):Size(56, 28):Pos_()	
+	nX,nY=ui:Append("WndButton", "Button_FlyC2HY", { txt = "花月25挑战", x = nX+10, y = nY+12}):Size(56, 28):Pos_()	 ]]
+	nX,_=ui:Append("WndButton", "Button_FlyC1XL", { txt = "仙侣10挑战", x = 455, y = nY }):Size(120, 28):Pos_()	
+	nX,nY=ui:Append("WndButton", "Button_FlyC2XL", { txt = "仙侣25挑战", x = nX+20, y = nY}):Size(120, 28):Pos_()	
+	nX,_=ui:Append("WndButton", "Button_FlyC1HY", { txt = "花月10挑战", x = 455, y = nY+12}):Size(120, 28):Pos_()	
+	nX,nY=ui:Append("WndButton", "Button_FlyC2HY", { txt = "花月25挑战", x = nX+20, y = nY+12}):Size(120, 28):Pos_()	
+	nY=nY+32
+	nX,_=ui:Append("Text", { txt = "门 派：", x = 395, y = nY, font = 192 }):Pos_()
+	nX,_=ui:Append("WndButton", "Button_FlyCY", { txt = "纯阳", x = 455, y = nY }):Size(50, 28):Pos_()
+	nX,_=ui:Append("WndButton", "Button_FlyWH", { txt = "万花", x = nX+20, y = nY }):Size(50, 28):Pos_()	
+	nX,_=ui:Append("WndButton", "Button_FlyTC", { txt = "天策", x = nX+20, y = nY }):Size(50, 28):Pos_()		
+	nX,nY=ui:Append("WndButton", "Button_FlySL", { txt = "少林", x = nX+20, y = nY }):Size(50, 28):Pos_()	
 	nY=nY+12
-	nX,nY=ui:Append("Text", { txt = "门 派：", x = 400, y = nY, font = 192 }):Pos_()
-	nY=nY+18
-	nX,_=ui:Append("WndButton", "Button_FlyCY", { txt = "纯阳", x = 400, y = nY }):Size(46, 28):Pos_()
-	nX,_=ui:Append("WndButton", "Button_FlyWH", { txt = "万花", x = nX+9, y = nY }):Size(46, 28):Pos_()	
-	nX,_=ui:Append("WndButton", "Button_FlyTC", { txt = "天策", x = nX+9, y = nY }):Size(46, 28):Pos_()		
-	nX,_=ui:Append("WndButton", "Button_FlySL", { txt = "少林", x = nX+9, y = nY }):Size(46, 28):Pos_()	
-	nX,_=ui:Append("WndButton", "Button_FlyQX", { txt = "七秀", x = nX+9, y = nY }):Size(46, 28):Pos_()
-	nX,nY=ui:Append("WndButton", "Button_FlyCJ", { txt = "藏剑", x = nX+9, y = nY }):Size(46, 28):Pos_()	
+	nX,_=ui:Append("WndButton", "Button_FlyQX", { txt = "七秀", x =455, y = nY }):Size(50, 28):Pos_()
+	nX,_=ui:Append("WndButton", "Button_FlyCJ", { txt = "藏剑", x = nX+20, y = nY }):Size(50, 28):Pos_()	
+	nX,_=ui:Append("WndButton", "Button_FlyWD", { txt = "五毒", x =  nX+20, y = nY }):Size(50, 28):Pos_()		
+	nX,nY=ui:Append("WndButton", "Button_FlyTM", { txt = "唐门", x = nX+20, y = nY}):Size(50, 28):Pos_()		
 	nY=nY+12
-	nX,_=ui:Append("WndButton", "Button_FlyWD", { txt = "五毒", x = 400, y = nY }):Size(46, 28):Pos_()		
-	nX,_=ui:Append("WndButton", "Button_FlyTM", { txt = "唐门", x = nX+9, y = nY}):Size(46, 28):Pos_()		
-	nX,_=ui:Append("WndButton", "Button_FlyMJ", { txt = "明教", x = nX+9, y = nY }):Size(46, 28):Pos_()
-	nX,_=ui:Append("WndButton", "Button_FlyGB", { txt = "丐帮", x = nX+9, y = nY }):Size(46, 28):Pos_()	
-	nX,_=ui:Append("WndButton", "Button_FlyCC", { txt = "苍云", x = nX+9, y = nY }):Size(46, 28):Pos_()		
-	nX,nY=ui:Append("WndButton", "Button_FlyCGM", { txt = "长歌", x = nX+9, y = nY}):Size(46, 28):Pos_()		
+	nX,_=ui:Append("WndButton", "Button_FlyMJ", { txt = "明教", x = 455, y = nY }):Size(50, 28):Pos_()
+	nX,_=ui:Append("WndButton", "Button_FlyGB", { txt = "丐帮", x = nX+20, y = nY }):Size(50, 28):Pos_()	
+	nX,_=ui:Append("WndButton", "Button_FlyCC", { txt = "苍云", x = nX+20, y = nY }):Size(50, 28):Pos_()		
+	nX,nY=ui:Append("WndButton", "Button_FlyCGM", { txt = "长歌", x = nX+20, y = nY}):Size(50, 28):Pos_()	
+	nY=nY+30
+	nX,_=ui:Append("Text", { txt = "五 小：", x = 395, y = nY, font = 192 }):Pos_()
+	nX,nY=ui:Append("Text", { txt = "已死，有事烧纸←_←", x = nX, y = nY, font = 194 }):Pos_()	
  end
 --Output(Station.GetMouseOverWindow():GetTreePath())
 
