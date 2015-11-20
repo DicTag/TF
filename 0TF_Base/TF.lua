@@ -1771,8 +1771,8 @@ function _TF.UI.Item:Click(fnAction, bSound, bSelect)
 		-- text link：tLinkColor，tHoverColor
 		local txt = self.txt
 		if txt then
-			local tLinkColor = bSound or { 255, 255, 0 }
-			local tHoverColor = bSelect or { 255, 200, 100 }
+			local tLinkColor = bSound or { 90, 230, 90 }
+			local tHoverColor = bSelect  or { 100, 210, 220 }
 			txt:SetFontColor(unpack(tLinkColor))
 			if tHoverColor then
 				self:Hover(function(bIn)
@@ -1798,10 +1798,18 @@ function _TF.UI.Item:Hover(fnEnter, fnLeave)
 	--hnd:RegisterEvent(0x300)
 	fnLeave = fnLeave or fnEnter
 	if fnEnter then
-		hnd.OnItemMouseEnter = function() fnEnter(true) end
+		hnd.OnItemMouseEnter = function() 
+			fnEnter(true) 
+			local txt = self.txt
+			if txt then	txt:SetFontColor( 100, 210, 220 )	end	--255, 200, 100
+		end
 	end
 	if fnLeave then
-		hnd.OnItemMouseLeave = function() fnLeave(false) end
+		hnd.OnItemMouseLeave = function() 
+			fnLeave(false) 
+			local txt = self.txt
+			if txt then	txt:SetFontColor(90, 230, 90 )	end
+		end
 	end
 	return self
 end
@@ -2179,7 +2187,7 @@ TF_Info.PS.OnPanelActive = function(frame)
 		OpenInternetExplorer("https://github.com/DicTag/TF") 
 	end,{ 255, 255, 255 }):Size(380,28):Pos_()			
 	_,nY=ui:Append("Text", { txt = "关于作者：", x = 0, y =  280, font = 27 }):Pos_()
-	ui:Append("Text", { x = 0, y = 308, w = 500, h = 40, multi = true }):Align(0, 0):Text("一个常驻体服的纯PVX花姐，人至懒则无敌，没事不要找她，有事更不要找她!")
+	ui:Append("Text", { x = 0, y = 308, w = 500, h = 40, multi = true }):Align(0, 0):Text("一个常驻体服的纯PVX花姐，没事不要找她，有事更不要找她!")
 end
 
 TF.RegisterPanel("关于本插件", "Interface\\TF\\0TF_Base\\aboutTF.jpg", "插件信息", TF_Info.PS)
@@ -2230,7 +2238,7 @@ _TF_About.PS = {}
 		OpenInternetExplorer("https://github.com/DicTag/TF") 
 	end):Size(70,28):Pos_()	
 	nX=ui:Append("Text", { txt = "<设置快捷键>", x = nX+10 , y = nY+10, font = 27 }):Click(function() HotkeyPanel_Open("【体服专用插件集】") end):Size(85,28):Pos_()
-	nX = ui:Append("Text", { txt = "<关于插件>", x = nX + 10, y = nY+10, font = 27 }):Click(function() TF.OpenPanel("关于本插件") end):Pos_()
+	nX=ui:Append("Text", { txt = "<关于插件>", x = nX + 10, y = nY+10, font = 27 }):Click(function() TF.OpenPanel("关于本插件") end):Pos_()
 	nX=ui:Append("Text", { txt = "<如何换图>", x = nX+10 , y = nY+10, font = 27 }):Click(function() OutputMessage("MSG_SYS","[TF插件集-如何替换欢迎图]\n在interface下建立 TFcustom 文件夹\n将图片拷至此目录，改名成WelImg.jpg\n长：宽 约为1.7，请选用相近长宽比的图\n")  end):Pos_()	
 	ui:Append("Text", { txt =  "By 微雨凭阑" , x = 420, y =360, font = 79 })
 end

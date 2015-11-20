@@ -374,9 +374,9 @@ function AssistChJT.OnFrameCreate()
 	nX,nY=ui:Append("WndButton", "Button_ZYER", { txt = "恶人谷", x = nX+10, y = nY}):Size(80, 28):Pos_()	
 	
 	nY=nY+12		
-	nX,_=ui:Append("Text","Text_MPDX", { txt = "大 侠", x = 27, y = nY, font = 205 }):Click(function() 
+	nX,_=ui:Append("Text","Text_MPDX", { txt = "[大 侠]", x = 27, y = nY, font = 205 }):Click(function() 
 		AssistChJT.OnLButtonClick()
-	end):Hover(function() AssistChJT.OnMouseEnter()  end):Pos_()
+	end):Hover(function() AssistChJT.OnMouseEnter()  end,function() HideTip() end):Pos_()
 	nX,_=ui:Append("WndButton", "Button_MPTC", { txt = "天策", x = 90, y = nY }):Size(50, 28):Pos_()	
 	nX,_=ui:Append("WndButton", "Button_MPCY", { txt = "纯阳", x = nX+20, y = nY}):Size(50, 28):Pos_()		
 	nX,_=ui:Append("WndButton", "Button_MPWH", { txt = "万花", x = nX+20, y = nY}):Size(50, 28):Pos_()			
