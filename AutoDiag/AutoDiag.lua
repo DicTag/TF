@@ -5,6 +5,22 @@ AutoDiag = {
 	IsOn = false,
 	SingleOn=false,
 	ADTitle="[TF自动对话选择]-",
+--	TempStr=nil,
+--	Iron=false,
+IronHave=nil,
+IronCh={
+[1]=0,
+[2]=1,
+[3]=1,
+[4]=1,
+[5]=2,
+[6]=3,
+[7]=4,
+[8]=4,
+[9]=5,
+[10]=6,
+},
+
 	tDiagCustom={},
 	tDiagMulti = {
 		"一百五十金这样的小钱，我会在乎么？给我出来！", --天工甲人
@@ -130,7 +146,7 @@ function AutoDiag.OpenDialog()
 	
 	local AD_nCount=-1
 	local ReplaceCont= string.gsub(szContext, "<%$C?",  function () AD_nCount=AD_nCount+1   return AD_nCount   end)
---	TF.Debug(AD_nCount.."\n"..ReplaceCont.."\n"..dwIndex,AutoDiag.ADTitle)
+	--TF.Debug(tar.szName..AD_nCount.."\n"..ReplaceCont.."\n"..dwIndex,AutoDiag.ADTitle)
 
 	if tar.szName=="白轩藏画" then
 		tQuestList=GetClientPlayer().GetQuestTree()
@@ -151,8 +167,12 @@ function AutoDiag.OpenDialog()
 			end
 		end
 	end	
+ 
+	if tar.szName=="铸剑台" then
+		nID=AutoDiag.IronCh[AutoDiag.IronHave]
+		GetClientPlayer().WindowSelect(dwIndex,nID) 
+	end
 	
-
 	if AD_nCount==0 then		--单选项
 		if AutoDiag.SingleOn then
 			TF.Debug("单项选择",AutoDiag.ADTitle)
@@ -222,6 +242,14 @@ function AutoDiag.RemoveData()
 	fr:Lookup("","Image_SideMId"):SetSize(300,nY+15)
 	fr:SetSize(300,nY+15)
 end
+ 
+ 
+function AutoDiag.SthHp()
+-- if arg1==QUEST_EVENT_TYPE.SET_QUEST_VALUE then end
+	AutoDiag.IronHave=arg3
+end
+
+TF.RegisterEvent("QUEST_DATA_UPDATE", AutoDiag.SthHp)
 
 function AutoDiag.Switch()
 	if AutoDiag.IsOn then
