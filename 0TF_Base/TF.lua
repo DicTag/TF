@@ -790,7 +790,17 @@ function _TF.UI.Base:Toggle(bShow)
 	return self.self
 end
 
--- (number, number) Instance:Pos()					-- 取得位置坐标
+function _TF.UI.Base:ASize()	--文字自动调整大小
+	local hnd = self.self
+	local nW, nH = hnd:GetSize()   
+	if self.type == "Text" or self.type == "Label" then
+		nW, nH = self.txt:GetTextExtent()
+	end
+	hnd:SetSize(nW, nH)
+	return self
+end
+
+-- (number, number) Instance:Pos()					-- 取得位置坐标				
 -- (self) Instance:Pos(number nX, number nY)	-- 设置位置坐标
 function _TF.UI.Base:Pos(nX, nY)
 	if not nX then
@@ -1542,7 +1552,7 @@ end
 
 -- (number, number) Instance:Size()
 -- (self) Instance:Size(number nW, number nH)
-function _TF.UI.Item:Size(nW, nH)
+function _TF.UI.Item:Size(nW, nH)	 
 	local hnd = self.self
 	if not nW then
 		local nW, nH = hnd:GetSize()
@@ -1750,7 +1760,7 @@ end
 -- (self) Instance:Click()
 -- (self) Instance:Click(func fnAction[, boolean bSound[, boolean bSelect] ])	-- 登记鼠标点击处理函数
 -- (self) Instance:Click(func fnAction[, table tLinkColor[, tHoverColor] ])		-- 同上，只对文本
-function _TF.UI.Item:Click(fnAction, bSound, bSelect)
+function _TF.UI.Item:Click(fnAction, szTip, bSound, bSelect)
 	local hnd = self.self
 	--hnd:RegisterEvent(0x001)
 	if not fnAction then
@@ -1777,13 +1787,14 @@ function _TF.UI.Item:Click(fnAction, bSound, bSelect)
 			if tHoverColor then
 				self:Hover(function(bIn)
 					if bIn then
+						if szTip then TF.ShowTip(szTip) end
 						txt:SetFontColor(unpack(tHoverColor))
 					else
 						txt:SetFontColor(unpack(tLinkColor))
 					end
-				end)
+				end,function() HideTip()  txt:SetFontColor(unpack(tLinkColor)) end)
 			end
-		end
+		end	
 	end
 	return self
 end
@@ -1793,22 +1804,25 @@ end
 -- (self) Instance:Hover(func fnEnter[, func fnLeave])	-- 设置鼠标进出处理函数
 -- fnEnter = function(true)		-- 鼠标进入时调用
 -- fnLeave = function(false)		-- 鼠标移出时调用，若省略则和进入函数一样
-function _TF.UI.Item:Hover(fnEnter, fnLeave)
+function _TF.UI.Item:Hover(fnEnter, fnLeave,tLinkColor,tHoverColor)
 	local hnd = self.self
 	--hnd:RegisterEvent(0x300)
-	fnLeave = fnLeave or fnEnter
+	--fnLeave = fnLeave or fnEnter
+	fnLeave=fnLeave or HideTip
 	if fnEnter then
 		hnd.OnItemMouseEnter = function() 
 			fnEnter(true) 
+			if not tHoverColor then return end
 			local txt = self.txt
-			if txt then	txt:SetFontColor( 100, 210, 220 )	end	--255, 200, 100
+			if txt then txt:SetFontColor(unpack(tHoverColor)) end
 		end
 	end
 	if fnLeave then
 		hnd.OnItemMouseLeave = function() 
 			fnLeave(false) 
+			if not tLinkColor then return end
 			local txt = self.txt
-			if txt then	txt:SetFontColor(90, 230, 90 )	end
+			if txt then txt:SetFontColor(unpack(tLinkColor)) end
 		end
 	end
 	return self
@@ -2180,12 +2194,15 @@ TF_Info.PS.OnPanelActive = function(frame)
 	_,nY=ui:Append("Text", { txt = "当前版本：", x = 0, y = 122, font=27}):Pos_()
 	nX=ui:Append("Text", { txt = "v"..TF.GetVersion().."(".._TF.szBuildDate..")", x = 0, y =  150 }):Pos_()
 	_,nY = ui:Append("Text", { txt ="下载地址/更新日志", x = 0, y =188, font=27, })
-	ui:Append("Text", { x = 0, y = 218, }):Align(0, 0):Text("sina微盘：	微雨凭阑的分享"):Click(function()
+	ui:Append("Text", { txt="sina微盘：微雨凭阑的分享", x = 0, y = 218, }):Click(function()
 		OpenInternetExplorer("http://vdisk.weibo.com/u/5749249142") 
-	end,{ 255, 255, 255 }):Size(210,28):Pos_()			
-	ui:Append("Text", { x = 0, y = 244, }):Align(0, 0):Text("Github：	https://github.com/DicTag/TF"):Click(function()
+	end):ASize():Pos_()			
+	ui:Append("Text", { txt="Github：https://github.com/DicTag/TF", x = 0, y = 244}):Click(function()
 		OpenInternetExplorer("https://github.com/DicTag/TF") 
-	end,{ 255, 255, 255 }):Size(380,28):Pos_()			
+	end):ASize():Pos_()			
+	ui:Append("Text", { txt =  "By 微雨凭阑" , x = 400, y =360, font = 79 }):Click(function()
+		OpenInternetExplorer("http://weibo.com/weiyupinglan") 
+	end,"作者微博"):ASize():Pos_()	
 	_,nY=ui:Append("Text", { txt = "关于作者：", x = 0, y =  280, font = 27 }):Pos_()
 	ui:Append("Text", { x = 0, y = 308, w = 500, h = 40, multi = true }):Align(0, 0):Text("一个常驻体服的纯PVX花姐，没事不要找她，有事更不要找她!")
 end
@@ -2233,15 +2250,17 @@ _TF_About.PS = {}
 	_,nY=ui:Append("Image", { x = 0, y = 5, w = 532, h = 313 }):File(TF.GetCustomFile("WelImg.jpg", "Interface\\TF\\0TF_Base\\WelImg.jpg")):Pos_()
 	nX = ui:Append("Text", { txt ="<插件下载>", x = 0, y = nY+10, font = 27 }):Click(function()
 		OpenInternetExplorer("http://vdisk.weibo.com/u/5749249142") 
-	end):Size(70,28):Pos_()	
+	end):ASize():Pos_()	
 	nX = ui:Append("Text", { txt ="<更新日志>", x = nX+10, y = nY+10, font = 27 }):Click(function()
-		OpenInternetExplorer("https://github.com/DicTag/TF") 
-	end):Size(70,28):Pos_()	
-	nX=ui:Append("Text", { txt = "<设置快捷键>", x = nX+10 , y = nY+10, font = 27 }):Click(function() HotkeyPanel_Open("【体服专用插件集】") end):Size(85,28):Pos_()
-	nX=ui:Append("Text", { txt = "<关于插件>", x = nX + 10, y = nY+10, font = 27 }):Click(function() TF.OpenPanel("关于本插件") end):Pos_()
-	nX=ui:Append("Text", { txt = "<如何换图>", x = nX+10 , y = nY+10, font = 27 }):Click(function() OutputMessage("MSG_SYS","[TF插件集-如何替换欢迎图]\n在interface下建立 TFcustom 文件夹\n将图片拷至此目录，改名成WelImg.jpg\n长：宽 约为1.7，请选用相近长宽比的图\n")  end):Pos_()	
-	ui:Append("Text", { txt =  "By 微雨凭阑" , x = 420, y =360, font = 79 })
-end
+		OpenInternetExplorer("https://github.com/DicTag/TF/releases") 
+	end):ASize():Pos_()	
+	nX=ui:Append("Text", { txt = "<设置快捷键>", x = nX+10 , y = nY+10, font = 27 }):Click(function() HotkeyPanel_Open("【体服专用插件集】") end):ASize():Pos_()
+	nX=ui:Append("Text", { txt = "<关于插件>", x = nX + 10, y = nY+10, font = 27 }):Click(function() TF.OpenPanel("关于本插件") end):ASize():Pos_()
+	nX=ui:Append("Text", { txt = "<如何换图>", x = nX+10 , y = nY+10, font = 27 }):Click(function() OutputMessage("MSG_SYS","[TF插件集-如何替换欢迎图]\n在interface下建立 TFcustom 文件夹\n将图片拷至此目录，改名成WelImg.jpg\n长：宽 约为1.7，请选用相近长宽比的图\n")  end,"点击后看聊天栏提示"):ASize():Pos_()	
+	ui:Append("Text", { txt =  "By 微雨凭阑" , x = 400, y =360, font = 79 }):Click(function()
+		OpenInternetExplorer("http://weibo.com/weiyupinglan") 
+	end,"作者微博"):ASize():Pos_()	
+end  
 
 --[[ _TF_About.PS.GetAuthorInfo = function()
 	return "微雨凭阑"
