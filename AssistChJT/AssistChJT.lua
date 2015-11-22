@@ -1,6 +1,7 @@
 AssistChJT={
 	AssistChJTTitle="[TF九天逍遥助手]-",
 	bFrameOpened = false,
+	IsDMenu = false,
 	clrbagIndex=16,
 	pveeqIndex=10,
 	IsAddMoney=false,
@@ -233,6 +234,58 @@ function AssistChJT.OnMouseLeave()
 	HideTip()
 end
 
+function AssistChJT._ShowRes()
+	local frame = Station.Lookup("Normal/PrintCh")
+	if frame then
+		frame:Destroy()
+	end
+		frame = Wnd.OpenWindow("Interface\\TF\\AssistChJT\\PrintCh.ini","PrintCh")
+		frame:Show() 
+		frame:BringToTop()
+		frame:EnableDrag(1)
+		frame:SetDragArea(0,0,460,300)
+end
+
+function AssistChJT.PrintChoice(dwIndex,szContext)
+	local AD_nCount=-1
+	local ReplaceCont= string.gsub(szContext, "<%$C?",  function () AD_nCount=AD_nCount+1   return AD_nCount   end)
+	AssistChJT._ShowRes()
+	local fr=Station.Lookup("Normal/PrintCh")
+	local ui = TF.UI(fr)
+	local nEnd,nY=1,5
+	for i=0,AD_nCount do
+		szTxt=string.match(ReplaceCont,"%d+ (.-)>",nEnd)
+		_,nEnd=string.find(ReplaceCont,"%d+ .->",nEnd)
+		local tLinkColor={90, 230, 90 }
+		local szTip=nil
+		if szTxt=="加入中立 " or szTxt=="删除所有装备" or szTxt=="重归大侠号" then 
+			tLinkColor={255,255,0}
+			szTip="按住Ctrl生效"
+		elseif szTxt=="传送去其它地图"  then 
+			tLinkColor={255,158,0}
+		elseif szTxt=="选择门派并升到90级" then 
+			tLinkColor={80,200,255}
+		elseif szTxt=="获得门派相应PVE装备" or szTxt=="获得门派相应PVP装备"  then 
+			tLinkColor={120,160,255}
+		end
+		if not string.find(szTxt,"帮主使用") and not string.find(szTxt,"我要升到") and  szTxt~="获得淬炼配方" and  szTxt~="关闭" then 
+			_,nY=ui:Append("Text",szTxt,  { txt =szTxt , x = 10, y = nY ,font=48 }):Click(function() 
+				if (this:GetName()=="加入中立 " or  this:GetName()=="删除所有装备" or  this:GetName()=="重归大侠号")  and not  IsCtrlKeyDown()  then return end
+				GetClientPlayer().WindowSelect(dwIndex,i) 
+				OutputMessage("MSG_ANNOUNCE_YELLOW", this:GetName().."\n") 
+				Station.Lookup("Normal/DialoguePanel"):Hide() 
+				if  string.find(szTxt,"传送到") then  AssistChJT._OpenDMenu() end
+			end,szTip,tLinkColor):ASize():Pos_()
+			nY=nY+10
+		end
+	end
+	if szTxt~="关闭" then 	ui:Append("Text", { txt = "后退", x =125, y = nY+5, font = 23 }):Click(AssistChJT.openJT):ASize():Pos_() end
+	ui:Append("Text", { txt = "关闭", x =250, y = nY+5, font = 23 }):Click(AssistChJT._OpenDMenu):ASize():Pos_()
+	fr:Lookup("","Image_SideMId"):SetSize(460,nY+40)
+	fr:SetSize(460,nY+40)
+	fr:SetDragArea(0,0,460,nY+40)
+end
+
 function AssistChJT.openJT()
 	player=GetClientPlayer()
 	if player.bOnHorse then	OutputMessage("MSG_ANNOUNCE_RED","骑乘状态不能使用【九天·逍遥】")  return end
@@ -244,6 +297,7 @@ end
   AssistChJT.OnOpenWindow=function()
 	if AssistChJT.IsAddMoney then AssistChJT._jtID=arg0 end
 	--nIdx=arg0
+	if AssistChJT.IsDMenu then local dwIndex,szContext = arg0,arg1 AssistChJT.PrintChoice(dwIndex,szContext) end
 	if not AssistChJT.IsAssistChJT then return end
 	fr=Station.Lookup("Normal/DialoguePanel")  
 	if fr and fr:IsVisible() then
@@ -264,7 +318,7 @@ end
 					AssistChJT.IsAssistChJT=false 
 					AssistChJT.szSecCon=nil
 					Station.Lookup("Normal/DialoguePanel"):Hide() 
-					if 	AssistChJT.CloseAfterD then	Station.Lookup("Topmost/AssistChJT"):Hide()  AssistChJT.CloseAfterD=false end
+					if  AssistChJT.CloseAfterD then	Station.Lookup("Normal/AssistChJT"):Hide()  AssistChJT.CloseAfterD=false end
 				end
 			end	
 		end
@@ -279,7 +333,7 @@ function AssistChJT.OnLButtonClick()
 	
 	if szName=="Text_MPDX" then szName="Button_MPDX" end
 	
-	local frame = Station.Lookup("Topmost/AssistChJT")
+	local frame = Station.Lookup("Normal/AssistChJT")
 	if szName == "Button_Close" then
 		if not frame then	return	end
 		frame:Hide()
@@ -334,19 +388,19 @@ function AssistChJT.OnLButtonClick()
  end
 	
  function AssistChJT.BtnUnable(szName)
-	local f=Station.Lookup("Topmost/AssistChJT")
+	local f=Station.Lookup("Normal/AssistChJT")
 	local btn=f:Lookup(szName)
 	if btn then btn:Enable(false) end
  end
  
  function AssistChJT.BtnEnable(szName)
-	local f=Station.Lookup("Topmost/AssistChJT")
+	local f=Station.Lookup("Normal/AssistChJT")
 	local btn=f:Lookup(szName)
 	if btn then btn:Enable(1) end
  end
  
 function AssistChJT.OnFrameCreate()
-	local  ui = TF.UI(Station.Lookup("Topmost/AssistChJT"))
+	local  ui = TF.UI(Station.Lookup("Normal/AssistChJT"))
 	ui:Append("Text", { txt = "九天逍遥助手", x = 315, y = 30, font = 203 })	 
 	ui:Append("Text", { txt = "通  用：", x = 27, y = 70, font = 185 })		
 	nX,_=ui:Append("WndButton", "Button_HorseBag", { txt = "获取马包", x = 90, y = 70 }):Size(80, 28):Pos_()
@@ -376,7 +430,7 @@ function AssistChJT.OnFrameCreate()
 	nY=nY+12		
 	nX,_=ui:Append("Text","Text_MPDX", { txt = "[大 侠]", x = 27, y = nY, font = 205 }):Click(function() 
 		AssistChJT.OnLButtonClick()
-	end):Hover(function() AssistChJT.OnMouseEnter()  end,function() HideTip() end):Pos_()
+	end):Hover(AssistChJT.OnMouseEnter, HideTip ,{ 90, 230, 90 }, { 100, 210, 220 }):Pos_()
 	nX,_=ui:Append("WndButton", "Button_MPTC", { txt = "天策", x = 90, y = nY }):Size(50, 28):Pos_()	
 	nX,_=ui:Append("WndButton", "Button_MPCY", { txt = "纯阳", x = nX+20, y = nY}):Size(50, 28):Pos_()		
 	nX,_=ui:Append("WndButton", "Button_MPWH", { txt = "万花", x = nX+20, y = nY}):Size(50, 28):Pos_()			
@@ -496,9 +550,13 @@ function AssistChJT.OnFrameCreate()
 	nX,_=ui:Append("WndButton", "Button_FlyGB", { txt = "丐帮", x = nX+20, y = nY }):Size(50, 28):Pos_()	
 	nX,_=ui:Append("WndButton", "Button_FlyCC", { txt = "苍云", x = nX+20, y = nY }):Size(50, 28):Pos_()		
 	nX,nY=ui:Append("WndButton", "Button_FlyCGM", { txt = "长歌", x = nX+20, y = nY}):Size(50, 28):Pos_()	
+--	nY=nY+30
+--	nX,_=ui:Append("Text", { txt = "五 小：", x = 395, y = nY, font = 192 }):Pos_()
+--	nX,nY=ui:Append("Text", { txt = "已死，有事烧纸←_←", x = nX, y = nY, font = 194 }):Pos_()	
 	nY=nY+30
-	nX,_=ui:Append("Text", { txt = "五 小：", x = 395, y = nY, font = 192 }):Pos_()
-	nX,nY=ui:Append("Text", { txt = "已死，有事烧纸←_←", x = nX, y = nY, font = 194 }):Pos_()	
+	ui:Append("Text", "DMenu",{ txt = "动态菜单（九天助手简易版", x = 395, y = nY, font=205  }):Click(function() 
+		AssistChJT._OpenWindow()  AssistChJT._OpenDMenu()	
+	end,"九天选项变动后使用"):ASize()
  end
 --Output(Station.GetMouseOverWindow():GetTreePath())
 
@@ -551,7 +609,7 @@ function AssistChJT.OnFrameBreathe()
 end
   
 function AssistChJT._OpenWindow()
-	local frame = Station.Lookup("Topmost/AssistChJT")
+	local frame = Station.Lookup("Normal/AssistChJT")
 	if frame then
 		if frame:IsVisible() then
 			frame:Hide() AssistChJT.bFrameOpened = false
@@ -570,9 +628,31 @@ function AssistChJT._OpenWindow()
 	end
 end
  
- AssistChJT.OnFrameKeyDown = function()
+AssistChJT.OnFrameKeyDown = function()
 	if GetKeyName(Station.GetMessageKey()) == "Esc" then
 		AssistChJT._OpenWindow()
+		return 1
+	end
+	return 0
+end
+ 
+ function AssistChJT._OpenDMenu()
+	local frame = Station.Lookup("Normal/PrintCh")
+	if frame then 
+		AssistChJT.IsDMenu=false 
+		frame:Destroy()
+		Station.Lookup("Normal/DialoguePanel"):Hide() 
+	else
+		AssistChJT.IsDMenu=true
+		AssistChJT.openJT()
+	end
+ end
+ 
+PrintCh={}
+PrintCh.OnFrameKeyDown= function()
+	if GetKeyName(Station.GetMessageKey()) == "Esc" then
+		AssistChJT.IsDMenu=false 
+		Station.Lookup("Normal/PrintCh"):Destroy()
 		return 1
 	end
 	return 0
@@ -587,7 +667,7 @@ function AssistChJT.MoneyInitial()
 	fr=Station.Lookup("Normal/DialoguePanel")  
 	if not fr or not fr:IsVisible() then return end 
 	local nType,nID,nIdx,aInfo=fr.dwTargetType, fr.dwTargetId, fr.dwIndex,fr.aInfo
-	--AssistChJT.clrbagIndex=16
+	--AssistChJT.clrbagIndex=16	
 	if 	aInfo[37]["context"]~="删除所有装备" then   -- aInfo[3]["name"]=="G" and 
 		for i=1,#aInfo,1 do 	
 			if aInfo[i].name == "$" and aInfo[i].context== "删除所有装备"  then   
@@ -685,7 +765,7 @@ end)
  
 
 TF.AddHotKey("XYZSOM", "九天逍遥助手面板", AssistChJT._OpenWindow)
-
+TF.AddHotKey("XYZSDM", "九天助手简易版", AssistChJT._OpenDMenu)
 -------------------------------------
 -- 设置界面
 -------------------------------------
@@ -701,6 +781,8 @@ _AssistChJT.PS.OnPanelActive = function(frame)
 	_,nY=ui:Append("Text", { txt =  "【功能说明】" , x = 0, y = nY+14, }):Pos_()
 	_,nY=ui:Append("Text", { txt =  "【1】快速选择[九天·逍遥]功能，告别滚动条" , x = 0, y = nY+12, }):Pos_()
 	_,nY=ui:Append("Text", { txt =  "【2】自动刷金" , x = 0, y = nY+12, }):Pos_()
+	--ui:Append("WndCheckBox", "Check_IsDMenu",{ txt ="启用动态菜单", x = 0, y = nY+20, checked = AssistChJT.IsDMenu}):Click(function(bChecked) AssistChJT.IsDMenu = bChecked  end):Pos_()  
+	
 --	ui:Append("Text", { txt =  "By 微雨凭阑" , x = 340, y =340, font = 205 })
 end
 
