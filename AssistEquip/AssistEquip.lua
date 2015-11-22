@@ -281,7 +281,7 @@ function AssistEquip.OnFrameCreate()
 	ui3= TF.UI(Station.Lookup("Normal/AssistEquip/PageSet_Main/Page_Equip/")) 
 	
 	nX,_=ui:Append("Text", { txt = "刷药配装助手", x = 300, y = 20, font = 203 }):Pos_()
-	nX,_=ui:Append("Text", { txt = "如何微调 ", x =328, y =436,  }):Click(function() tips="背包过滤微调键使用方法：\n【1】在背包某格上按[保留键]强制高亮（不会售出\n【2】在背包某格上按[待售键]强制调暗（自动售出\n【3】快捷键为【保留：强制高亮】【待售：强制调暗】\n"  TF.Sysmsg(tips,AssistEquip.DETitle) end):Hover(function()  tips="点击后看聊天栏提示" TF.ShowTip(tips) end,function() HideTip() end):Size(65,28):Pos_()
+	nX,_=ui:Append("Text", { txt = "如何微调 ", x =328, y =440,  }):Click(function() tips="背包过滤微调键使用方法：\n【1】在背包某格上按[保留键]强制高亮（不会售出\n【2】在背包某格上按[待售键]强制调暗（自动售出\n【3】快捷键为【保留：强制高亮】【待售：强制调暗】\n"  TF.Sysmsg(tips,AssistEquip.DETitle) end,"点击后看聊天栏提示"):ASize():Pos_()
 	ui:Append("WndButton",  { txt = "设置保留/待售键", x = nX, y = 438 , font = 185, }):Size(145, 28):Click(function() HotkeyPanel_Open("【体服专用插件集】") end):Pos_()
 	ui:Append("WndCheckBox", "CheckBox_Lock",{ txt ="Lock(慎用", x = 556, y = 438, font = 203 }):Pos_()
 	ui:Append("Text", { txt = "勾选需保留的（背包显示高亮", x =50, y = 475 , font = 205, })	
@@ -448,13 +448,13 @@ function AssistEquip.OnFrameCreate()
 	ui3:Append("WndComboBox", "Combo_Attr2", { x = 200, y = 325, w=160, h=25, txt = AssistEquip.GetComboN("Attr2") }):Menu(AssistEquip.GetEqAttr2Menu)
 	ui3:Append("WndComboBox", "Combo_Ex", { x = 200, y = 365, w=160, h=25, txt = AssistEquip.GetComboN("Ex") }):Menu(AssistEquip.GetEqExMenu)
 	
- 	ui3:Append("Text", { txt = "加速查询", x =500, y = 220,  font = 205  }):Size(60,28) :Click(function() 
+ 	ui3:Append("Text", { txt = "加速查询", x =500, y = 220,  font = 205  }):ASize():Click(function() 
 		AssistHaste._OpenWindow()
 		end)
-	ui3:Append("Text", { txt = "导入方案", x =500, y = 260, font = 205 }):Size(60,28) :Click(function() 
+	ui3:Append("Text", { txt = "导入方案", x =500, y = 260, font = 205 }):ASize():Click(function() 
 		GetUserInput("请输入需要导入的文件名(不要后缀，如：eq\n路径在Interface/EqData",function(szText) AssistEquip.LoadEqData(szText) end, nil)
-		end):Hover(function()  tips="从文件导入配装信息" TF.ShowTip(tips) end,function() HideTip() end)
-	ui3:Append("Text", { txt = "如何获取快照", x =500, y = 300, }):Size(80,28) :Click(function() tips="如何获取快照：\n【自己】从人物装备面板保存快照（右上角\n【附近玩家】需选中该玩家，不要切换目标\n【队友好友不在附近】需向其询问ID，勿选中其他目标\n（鼠标悬停自身头像【TF】按钮可获取自身ID\n（按住Ctrl划过Cataclysm面板，可获取队友ID\n只保存装备及五彩石信息，无法获取附魔信息\n"  TF.Sysmsg(tips,AssistEquip.DETitle) end):Hover(function()  tips="点击后看聊天栏提示" TF.ShowTip(tips) end,function() HideTip() end):Pos_()
+		end,"从文件导入配装信息")
+	ui3:Append("Text", { txt = "如何获取快照", x =500, y = 300, }):ASize():Click(function() tips="如何获取快照：\n【自己】从人物装备面板保存快照（右上角\n【附近玩家】需选中该玩家，不要切换目标\n【队友好友不在附近】需向其询问ID，勿选中其他目标\n（鼠标悬停自身头像【TF】按钮可获取自身ID\n（按住Ctrl划过Cataclysm面板，可获取队友ID\n只保存装备及五彩石信息，无法获取附魔信息\n"  TF.Sysmsg(tips,AssistEquip.DETitle) end,"点击后看聊天栏提示"):Pos_()
  
 	local page = this:Lookup("PageSet_Main")
 	page:Lookup("CheckBox_Drug"):Lookup("", ""):Lookup("Text_DrugCapital"):SetText("刷药")
@@ -921,16 +921,16 @@ function AssistEquip.PrintRes(tEqInfo,szBeiZhu,score)
 		end
 	end
 	--szMsg, fActionSure, fActionCancel, fAutoClose, rect, szDefault,
-	ui3:Append("Text", { txt = "导出到文件", x =80, y = nY+15, font = 205 }):Size(80,28) :Click(function() 				 
+	ui3:Append("Text", { txt = "导出到文件", x =80, y = nY+15, font = 205 }):ASize() :Click(function() 				 
 		GetUserInput("请输入文件名，如：eq1。", function(szText) 
 				AssistEquip.SaveEqData(szText,tEqInfo) 
 			end, nil,nil,nil,szBeiZhu.."-"..szName) 
 		end) 
-		ui3:Append("Text", { txt = "对比背包", x =230, y = nY+15, font = 205 }):Size(60,28) :Click(function() 
+		ui3:Append("Text", { txt = "对比背包", x =230, y = nY+15, font = 205 }):ASize() :Click(function() 
 		--TF.Alert("注意和当前穿的重复会不精炼，\n请先切至另一套配装再领", nil, "Ok") 
 		AssistEquip.CompBg(tEqInfo)
 		end) 			
-	ui3:Append("Text", { txt = "关闭", x =365, y = nY+15, font = 205 }):Size(40,28) :Click(function() 				 
+	ui3:Append("Text", { txt = "关闭", x =365, y = nY+15, font = 205 }):ASize() :Click(function() 				 
 		--AssistEquip._ShowRes()
 		Station.Lookup("Normal1/ResEqWnd"):Destroy()
 		local fb=Station.Lookup("Normal/BigBagPanel")
@@ -979,12 +979,12 @@ function AssistEquip.SaveEqData(szText,tEqInfo)
 				nY=nY+30 
 			end
 		end
-		ui3:Append("Text", { txt = "对比背包", x =80, y = nY+15, font = 205 }):Size(60,28) :Click(function() 
+		ui3:Append("Text", { txt = "对比背包", x =80, y = nY+15, font = 205 }):ASize() :Click(function() 
 		AssistEquip.CompBg(AssistEquip.tload)
 		end) 	
 		ui3:Append("WndCheckBox", "CheckBox_LockEq",{ txt ="Lock(慎用", x = 185, y = nY+14, font = 167, checked = AssistEquip.LockEq }):Click(function(bChecked) AssistEquip.LockEq = bChecked
 	end)
-		ui3:Append("Text", { txt = "关闭", x =365, y = nY+15, font = 205 }):Size(40,28) :Click(function() 				 
+		ui3:Append("Text", { txt = "关闭", x =365, y = nY+15, font = 205 }):ASize() :Click(function() 				 
 		Station.Lookup("Normal1/ResEqWnd"):Destroy()	
 		AssistEquip.LockEq=false
 		local fb=Station.Lookup("Normal/BigBagPanel")
@@ -1751,9 +1751,9 @@ function DEBreathe.OnFrameBreathe()
 	if f and f:IsVisible() then
 		if GetLogicFrameCount() % 4 == 0  and not AssistEquip.flagApp0 then	
 			ui=TF.UI(Station.Lookup("Normal/BigBagPanel"))
-			ui:Append("Text", { txt = "筛选", x =14, y = 337 }):Size(30,28) :Click(function() 
+			ui:Append("Text", { txt = "筛选", x =14, y = 337 }):Click(function() 
 				AssistEquip._OpenWindow()
-			end, { 90, 230, 90 }):Hover(function() tips=GetFormatText("刷药配装助手\n", 101) .. GetFormatText("打开设置面板", 106) TF.ShowTip(tips) end,function() HideTip() end)	
+			end):Hover(function() tips=GetFormatText("刷药配装助手\n", 101) .. GetFormatText("打开设置面板", 106) TF.ShowTip(tips) end,HideTip ,{ 90, 230, 90 }, { 100, 210, 220 })
 			AssistEquip.flagApp0=true
 		end
 		fd=Station.Lookup("Normal/AssistEquip")
@@ -1774,12 +1774,12 @@ function DEBreathe.OnFrameBreathe()
 			fff=f2:Lookup("Page_Main/Page_Battle")	  	
 			local ui = TF.UI(fff)   
 			local myid=UI_GetClientPlayerID()
-			nX,_=ui:Append("Text", { txt = "快照", x =268, y = 15, font = 205 }):Size(30,28) :Click(function() 
+			nX,_=ui:Append("Text", { txt = "快照", x =268, y = 15, font = 205 }):ASize() :Click(function() 
 				AssistEquip.EquipInfo(UI_GetClientPlayerID())
-			end):Hover(function()  tips="快照当前配装信息\n不含附魔" TF.ShowTip(tips) end,function() HideTip() end):Pos_()	
-			ui:Append("Text", { txt = "导入", x =nX+8, y = 15, font = 205 }):Size(30,28) :Click(function() 
+			end,"快照当前配装信息\n不含附魔"):Pos_()	
+			ui:Append("Text", { txt = "导入", x =nX+8, y = 15, font = 205 }):ASize() :Click(function() 
 				GetUserInput("请输入需要导入的文件名(不要后缀，如：eq\n路径在Interface/EqData",function(szText) AssistEquip.LoadEqData(szText) end, nil)
-			end):Hover(function()  tips="从文件导入配装信息" TF.ShowTip(tips) end,function() HideTip() end):Pos_()	
+			end,"从文件导入配装信息"):Pos_()	
 			AssistEquip.flagApp1 =true
 		end
 	end
@@ -1792,7 +1792,7 @@ function DEBreathe.OnFrameBreathe()
 			fff=f3:Lookup("Page_Main/Page_Battle")	  	
 			local ui = TF.UI(fff)   
 		--	ui:Append("Text", { txt ="拖这里", font = 27 , x = 8, y = 10 ,alpha=200}) 	
-			nX,_=ui:Append("Text", { txt = "快照", x =235, y = 35, font=205  }):Size(30,28) :Click(function() 
+			nX,_=ui:Append("Text", { txt = "快照", x =235, y = 35, font=205  }):ASize() :Click(function() 
 				local nType,nID=Target_GetTargetData() 
 				local szMSG="请输入玩家ID：(Ctrl查看"		
 				if not nID or nType~=4 then --not IsPlayer(nID) then
@@ -1800,8 +1800,8 @@ function DEBreathe.OnFrameBreathe()
 				else
 					AssistEquip.EquipInfoByID(nID)
 				end
-			end):Hover(function()  tips="快照当前配装信息（不含附魔\n选中该玩家，或输入其ID" TF.ShowTip(tips) end,function() HideTip() end):Pos_()
-			ui:Append("Text", { txt = "如何获取ID", x =nX+15, y = 35,}):Size(80,28) :Click(function() tips=AssistEquip.DETitle.."如何获取玩家ID\n附近玩家只需选中，勿切换目标，无需输入ID\n队友好友不在附近：需向其询问ID，勿选中其他目标\n（鼠标悬停自身头像【TF】按钮可获取自身ID\n（按住Ctrl划过Cataclysm面板，可获取队友ID\n"  OutputMessage("MSG_SYS",tips) end):Hover(function()  tips="点击后看聊天栏提示" TF.ShowTip(tips) end,function() HideTip() end)			
+			end,"快照当前配装信息（不含附魔\n选中该玩家，或输入其ID"):Pos_()
+			ui:Append("Text", { txt = "如何获取ID", x =nX+15, y = 35,}):ASize() :Click(function() tips=AssistEquip.DETitle.."如何获取玩家ID\n附近玩家只需选中，勿切换目标，无需输入ID\n队友好友不在附近：需向其询问ID，勿选中其他目标\n（鼠标悬停自身头像【TF】按钮可获取自身ID\n（按住Ctrl划过Cataclysm面板，可获取队友ID\n"  OutputMessage("MSG_SYS",tips) end,"点击后看聊天栏提示")		
 			AssistEquip.flagApp2 =true
 		end	 
 	end
