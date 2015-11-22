@@ -9,8 +9,8 @@
 	bFrameOpened=false,
 	szTitle="体服专用插件集",
 	szShort="[体服插件] ",
-	dwVersion= 0x2020000,		--版本号维护
-	szBuildDate="20151120",	--更新日期维护
+	dwVersion= 0x2030000,		--版本号维护
+	szBuildDate="20151122",	--更新日期维护
 	szIniFile = "Interface\\TF\\0TF_Base\\TF.ini",
 	tClass = {"所有功能","辅助工具","自动工具","界面增强","插件信息"},	--All,tTool,Auto,UI,Info
 	tItem = { {}, {}, {}, {}, {} },
