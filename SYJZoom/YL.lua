@@ -34,6 +34,10 @@ function YL.OnFrameBreathe()
 			f2:SetDragArea(0,0,80,80)			
 			YL.AddEnterButton2(f2)
 		end
+		local fLR =Station.Lookup("Normal/LR_AS_Equip_Panel/")   
+		if fLR and fLR:IsVisible() then 
+			fLR:BringToTop()
+		end
 		local f3 = Station.Lookup("Normal/PlayerView")  
 		if f3  and f3:IsVisible()then 
 			f3:EnableDrag(1)
