@@ -197,7 +197,7 @@ function AutoDiag.OpenDialog()
 		end
 		--无预设：添加选项
  		ui = TF.UI(page)
-		ui:Append("Text", "ADAddEntr",{ txt = "增加自动对话选项", x =260, y = 35, font = 187 }):Click(function() AutoDiag.AddNewDiag(AD_nCount,ReplaceCont) end):Size(118,28)	
+		ui:Append("Text", "ADAddEntr",{ txt = "增加自动对话选项", x =260, y = 35, font = 187 }):Click(function() AutoDiag.AddNewDiag(AD_nCount,ReplaceCont) end):ASize()	
 	--else TF.Debug("无选项",AutoDiag.ADTitle)  --count=-1
 	end
 end
@@ -206,19 +206,21 @@ function AutoDiag.AddNewDiag(AD_nCount,ReplaceCont)
 	AutoDiag._ShowRes()
 	local fr=Station.Lookup("Normal/AddPreDiag")
 	local ui = TF.UI(fr)
-	local nEnd,nY=1,5
+	ui:Append("Text", {txt="增加自动对话选项",x=40,y=5, font=205})
+	local nEnd,nY=1,42
 	for i=0,AD_nCount do
 		szTxt=string.match(ReplaceCont,"%d+ (.-)>",nEnd)
 		_,nEnd=string.find(ReplaceCont,"%d+ .->",nEnd)
-		_,nY=ui:Append("Text",szTxt,  { txt =szTxt , x = 40, y = nY , }):Click(function() table.insert(AutoDiag.tDiagCustom,this:GetName()) TF.Sysmsg("增加自动对话选项： "..this:GetName(),AutoDiag.ADTitle) end):Pos_()
+		_,nY=ui:Append("Text",szTxt,  { txt =szTxt , x = 40, y = nY , }):Click(function() table.insert(AutoDiag.tDiagCustom,this:GetName()) TF.Sysmsg("增加自动对话选项： "..this:GetName(),AutoDiag.ADTitle) end):ASize():Pos_()
 		nY=nY+10
 	end
-	ui:Append("Text",  { txt = "移除预设选项", x = 40, y = nY+20 ,font=205 }):Click(AutoDiag.RemoveData):Size(118,28)
+	ui:Append("Text",  { txt = "移除预设选项", x = 40, y = nY+20 ,font=205 }):Click(AutoDiag.RemoveData):ASize()
 	_,nY=ui:Append("Text", { txt = "关闭", x =200, y = nY+20, font = 205 }):Click(function() 				 
 	Station.Lookup("Normal/AddPreDiag"):Destroy()
-	end):Size(28,28):Pos_()
-	fr:Lookup("","Image_SideMId"):SetSize(300,nY+15)
-	fr:SetSize(300,nY+15)
+	end):ASize():Pos_()
+	fr:Lookup("","Image_SideMId"):SetSize(420,nY+15)
+	fr:SetSize(420,nY+15)
+	fr:SetDragArea(0,0,420,nY+15)
 end
 
 function AutoDiag.RemoveData()
@@ -226,21 +228,22 @@ function AutoDiag.RemoveData()
 	local fr=Station.Lookup("Normal/AddPreDiag")
 	local  ui = TF.UI(fr)
 	ui:Append("Text", {txt="按住Ctrl选择某一项可删除，误删不能恢复!",x=5,y=5, font=205})
-	local nX,nY=5,30
+	local nX,nY=12,36
 	for i=1,#AutoDiag.tDiagCustom do
 		_,nY=ui:Append("Text", "Pos"..i, { txt =AutoDiag.tDiagCustom[i] , x = nX, y = nY , }):Click(function()	
 			if not IsCtrlKeyDown() then return end
 			nPos=tostring(string.match(this:GetName(),"Pos(%d+)"))
 			table.remove(AutoDiag.tDiagCustom,nPos) 
 			AutoDiag.RemoveData()
-			end):Pos_()
+			end):ASize():Pos_()
 		nY=nY+4
 		end
 	_,nY=ui:Append("Text", { txt = "关闭", x =200, y = nY+15, font = 205 }):Click(function() 				 
 	Station.Lookup("Normal/AddPreDiag"):Destroy()
-	end):Pos_()
-	fr:Lookup("","Image_SideMId"):SetSize(300,nY+15)
-	fr:SetSize(300,nY+15)
+	end):ASize():Pos_()
+	fr:Lookup("","Image_SideMId"):SetSize(420,nY+15)
+	fr:SetSize(420,nY+15)
+	fr:SetDragArea(0,0,420,nY+15)
 end
  
  
@@ -269,7 +272,7 @@ function AutoDiag._ShowRes()
 		frame = Wnd.OpenWindow("Interface\\TF\\AutoDiag\\AddPreDiag.ini","AddPreDiag")
 		frame:Show() 
 		frame:EnableDrag(1)
-		frame:SetDragArea(0,0,520,500)
+		frame:SetDragArea(0,0,420,300)
 end
  
 AddPreDiag={}
