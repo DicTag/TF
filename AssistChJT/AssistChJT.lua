@@ -135,7 +135,7 @@ AssistChJT={
 		["Button_TMJG"]="获取唐门专用子弹",
 	},	
 	tBtnUnDXC={"Button_MiJi","Button_XYCL","Button_ZYHQ","Button_ZYER","Button_FuZhu","Button_FZ90","Button_FZ95","Button_ColorStone","Button_ClrBag","Button_ZYZL","Button_MPDX","Button_AddMoney"},
-	tBtnUnable = {"Button_FlyCGM"},	
+	tBtnUnable = {"Button_FlyCGM","Button_FlyCC",},	
 	tBtnFemaleUn = {"Button_MPSL","Button_MPCG",},
 	tBtnHanziUn = {"Button_MPXX",},
 	tBtnBoyUn = {"Button_MPWD","Button_MPTM","Button_MPMJ","Button_MPCG",},	--WD
@@ -173,7 +173,7 @@ AssistChJT.tMPEn = {[2]= AssistChJT.tMPFemaleEn,[6]= AssistChJT.tMPFemaleEn,[1]=
 			local szSce=GetClientPlayer().GetScene().szDisplayName
 			if szSce~="稻香村"	and szName~="Button_HorseBag" and  szName~="Button_XiuWei"  and szName~="Button_Friend" and  szName~="Button_TMJG"  and  szName~="Button_Money50"  and not string.find(szName,"Button_Set")  and not string.find(szName,"Button_Fly") then TF.ShowTip("该功能只能在稻香村使用") return end			
 			if szName=="Button_FlyCGM" then TF.ShowTip("暂未开放，连书院都没了") return end
- 
+			if szName=="Button_FlyCC" then TF.ShowTip("被策划吃啦...") return end
 			local player=GetClientPlayer()
 			tBtnUn2=AssistChJT.tRoleBtn[player.nRoleType]
 			for i = 1, #tBtnUn2 do
@@ -252,31 +252,53 @@ function AssistChJT.PrintChoice(dwIndex,szContext)
 	AssistChJT._ShowRes()
 	local fr=Station.Lookup("Normal/PrintCh")
 	local ui = TF.UI(fr)
+	local szSce=GetClientPlayer().GetScene().szDisplayName
 	local nEnd,nY=1,5
 	for i=0,AD_nCount do
 		szTxt=string.match(ReplaceCont,"%d+ (.-)>",nEnd)
 		_,nEnd=string.find(ReplaceCont,"%d+ .->",nEnd)
 		local tLinkColor={90, 230, 90 }
 		local szTip=nil
-		if szTxt=="加入中立 " or szTxt=="删除所有装备" or szTxt=="重归大侠号" then 
-			tLinkColor={255,255,0}
-			szTip="按住Ctrl生效"
-		elseif szTxt=="传送去其它地图"  then 
-			tLinkColor={255,158,0}
-		elseif szTxt=="选择门派并升到90级" then 
-			tLinkColor={80,200,255}
-		elseif szTxt=="获得门派相应PVE装备" or szTxt=="获得门派相应PVP装备"  then 
-			tLinkColor={120,160,255}
+		if szTxt=="加入中立 " or szTxt=="删除所有装备" or szTxt=="重归大侠号" then tLinkColor={255,255,0} szTip="按住Ctrl生效"
+		elseif szTxt=="传送去其它地图" or string.find(szTxt,"传送到稻香村") then tLinkColor={255,158,0}
+		elseif szTxt=="选择门派并升到90级" or szTxt=="传送到洛阳"  or szTxt=="传送到扬州"  or szTxt=="传送到成都" or  string.find(szTxt,"门派") or  string.find(szTxt,"修为")  then tLinkColor={225,215,120}
+		elseif string.find(szTxt,"少林") then tLinkColor={210,180,0}
+		elseif string.find(szTxt,"万花") then tLinkColor={150,95,210}--{127,31,223}
+		elseif string.find(szTxt,"天策") or string.find(szTxt,"恶人") then tLinkColor={170,30,30}--{160,0,0}		
+		elseif string.find(szTxt,"纯阳") or string.find(szTxt,"浩气") then tLinkColor={56,175,255}
+		elseif string.find(szTxt,"七秀") then tLinkColor={255,127,255}
+		elseif string.find(szTxt,"五毒") then tLinkColor={70,80,200}--{63,31,159}			
+		elseif string.find(szTxt,"唐门") then tLinkColor={0,133,144}
+		elseif string.find(szTxt,"藏剑") then tLinkColor={255,255,0}
+		elseif string.find(szTxt,"丐帮") then tLinkColor={205,133,63}		
+		elseif string.find(szTxt,"明教") then tLinkColor={253,84,0}
+		elseif string.find(szTxt,"苍云") then tLinkColor={180,60,0}
+		elseif string.find(szTxt,"长歌") then tLinkColor={100,250,180}					
 		end
-		if not string.find(szTxt,"帮主使用") and not string.find(szTxt,"我要升到") and  szTxt~="获得淬炼配方" and  szTxt~="关闭" then 
-			_,nY=ui:Append("Text",szTxt,  { txt =szTxt , x = 10, y = nY ,font=48 }):Click(function() 
-				if (this:GetName()=="加入中立 " or  this:GetName()=="删除所有装备" or  this:GetName()=="重归大侠号")  and not  IsCtrlKeyDown()  then return end
-				GetClientPlayer().WindowSelect(dwIndex,i) 
-				OutputMessage("MSG_ANNOUNCE_YELLOW", this:GetName().."\n") 
-				Station.Lookup("Normal/DialoguePanel"):Hide() 
-				if  string.find(szTxt,"传送到") then  AssistChJT._OpenDMenu() end
-			end,szTip,tLinkColor):ASize():Pos_()
-			nY=nY+10
+		if not string.find(szTxt,"帮主使用") and not string.find(szTxt,"我要升到") and  szTxt~="获得淬炼配方" and  szTxt~="关闭" then
+			if szSce~="稻香村" and (string.find(szTxt,"辅助物品") or string.find(szTxt,"稀有材料")  or string.find(szTxt,"五彩石") or string.find(szTxt,"加入")  or string.find(szTxt,"门派")  or string.find(szTxt,"删除")  or string.find(szTxt,"大侠")) then  
+				_,nY=ui:Append("Text",szTxt,  { txt =szTxt , x = 10, y = nY ,font=48 }):Color(180, 180, 180 ):Hover(function() TF.ShowTip("请回稻香村") end):ASize():Pos_()
+				nY=nY+10
+			elseif GetClientPlayer().dwForceID~=0 and string.find(szTxt,"选择门派并升到90级") then 
+				_,nY=ui:Append("Text",szTxt,  { txt =szTxt , x = 10, y = nY ,font=48 }):Color(180, 180, 180 ):Hover(function() TF.ShowTip("请回归大侠") end):ASize():Pos_()
+				nY=nY+10
+			elseif GetClientPlayer().dwForceID==0  and  string.find(szTxt,"获得门派") then  
+				_,nY=ui:Append("Text",szTxt,  { txt =szTxt , x = 10, y = nY ,font=48 }):Color(180, 180, 180 ):Hover(function() TF.ShowTip("请先入门派") end):ASize():Pos_()
+				nY=nY+10
+			elseif GetClientPlayer().nCamp==0 and  string.find(szTxt,"PVP") then 
+				_,nY=ui:Append("Text",szTxt,  { txt =szTxt , x = 10, y = nY ,font=48 }):Color(180, 180, 180 ):Hover(function() TF.ShowTip("请先入阵营") end):ASize():Pos_()
+				nY=nY+10
+			else
+				_,nY=ui:Append("Text",szTxt,  { txt =szTxt , x = 10, y = nY ,font=48 }):Click(function() 
+					if (this:GetName()=="加入中立 " or  this:GetName()=="删除所有装备" or  this:GetName()=="重归大侠号")  and not  IsCtrlKeyDown()  then return end
+					GetClientPlayer().WindowSelect(dwIndex,i) 
+					OutputMessage("MSG_ANNOUNCE_YELLOW", this:GetName().."\n") 
+					Station.Lookup("Normal/DialoguePanel"):Hide() 
+					if this:GetName()=="重归大侠号" or string.find(this:GetName(),"加入") then AssistChJT.openJT()  end
+					if  string.find(this:GetName(),"传送到") then  AssistChJT._OpenDMenu() end
+				end,szTip,tLinkColor):ASize():Pos_()
+				nY=nY+10
+			end
 		end
 	end
 	if szTxt~="关闭" then 	ui:Append("Text", { txt = "后退", x =125, y = nY+5, font = 23 }):Click(AssistChJT.openJT):ASize():Pos_() end
