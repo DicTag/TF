@@ -1749,11 +1749,10 @@ function DEBreathe.OnFrameBreathe()
 	end
 	local f = Station.Lookup("Normal/BigBagPanel")
 	if f and f:IsVisible() then
-		if GetLogicFrameCount() % 4 == 0  and not AssistEquip.flagApp0 then	
-			ui=TF.UI(Station.Lookup("Normal/BigBagPanel"))
-			ui:Append("Text", { txt = "筛选", x =14, y = 337 }):Click(function() 
-				AssistEquip._OpenWindow()
-			end):Hover(function() tips=GetFormatText("刷药配装助手\n", 101) .. GetFormatText("打开设置面板", 106) TF.ShowTip(tips) end,HideTip ,{ 90, 230, 90 }, { 100, 210, 220 })
+		if  not AssistEquip.flagApp0 then	
+			local ui=TF.UI(f)
+			--ui:Append("Text", { txt = "筛选", x =14, y = 337 }):ASize():Click(AssistEquip._OpenWindow,GetFormatText("刷药配装助手\n", 101) .. GetFormatText("打开设置面板", 106))
+			ui:Append("Text", { txt = "筛选", x =14, y = 337 }):Click(AssistEquip._OpenWindow):Hover(function() tips=GetFormatText("刷药配装助手\n", 101) .. GetFormatText("打开设置面板", 106) TF.ShowTip(tips) end,nil,{ 90, 230, 90 },{ 100, 210, 220 }):Size(40,28)
 			AssistEquip.flagApp0=true
 		end
 		fd=Station.Lookup("Normal/AssistEquip")
